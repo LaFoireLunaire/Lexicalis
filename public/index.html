@@ -34,9 +34,19 @@
         <p id="feedback" class="feedback" role="status" aria-live="polite">Chargement du dictionnaire…</p>
         <button id="retry-button" class="secondary" type="button" hidden>Réessayer le chargement</button>
 
+        <section id="last-guess" class="last-guess" role="status" aria-labelledby="last-guess-label" aria-atomic="true" hidden>
+          <p id="last-guess-label" class="last-guess-label">Dernière proposition</p>
+          <div class="last-guess-details">
+            <span id="last-guess-number" class="last-guess-number"></span>
+            <strong id="last-guess-word"></strong>
+            <span id="last-guess-temperature" class="temperature"></span>
+            <div id="last-guess-progression"></div>
+          </div>
+        </section>
+
         <div class="list-toolbar"><h2>Vos explorations <span id="entry-count">0</span></h2><label for="sort">Trier par <select id="sort"><option value="temperature">Température</option><option value="chronological">Chronologie</option></select></label></div>
         <div class="table-wrap">
-          <table id="guesses-table"><caption class="sr-only">Vos propositions et leurs proximités avec le mot mystère</caption><thead><tr><th scope="col">N°</th><th scope="col">Mot</th><th scope="col" class="numeric">Température</th><th scope="col">Progression</th></tr></thead><tbody id="guesses"></tbody></table>
+          <table id="guesses-table"><caption class="sr-only">Vos propositions et leurs proximités avec le mot mystère</caption><thead><tr><th scope="col">N°</th><th scope="col">Mot</th><th scope="col" class="numeric" aria-label="Température"><span class="column-label-full">Température</span><span class="column-label-compact" aria-hidden="true">Temp.</span></th><th scope="col" aria-label="Progression"><span class="column-label-full">Progression</span><span class="column-label-compact" aria-hidden="true">Progr.</span></th></tr></thead><tbody id="guesses"></tbody></table>
           <div class="empty" id="empty"><div class="empty-symbol" aria-hidden="true">✧</div><h3>Tout commence par un mot.</h3><p>Un objet, une émotion, une idée…<br>Laissez votre intuition ouvrir la voie.</p></div>
         </div>
       </section>

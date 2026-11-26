@@ -52,7 +52,7 @@ Ces écarts de rang sont attendus avec un vocabulaire différent et restent visi
 
 - **13 tests JavaScript** du moteur passent : classement non arrondi, égalités déterministes, cosinus, accents, saisies, doublons, indices, tirage, sauvegardes et fins de partie.
 - **10 tests Python** passent : export/reprise et réparation des assets corrompus, normalisation, binaire/gzip, filtrage, intégrité, modèles tronqués, comparateurs du modèle original et de l’export, références vides.
-- **21 contrôles Chromium sur fixtures** passent : Worker, intégrité, parcours, largeurs de 320 à 1 024 px, CORS, iframe et stockage indisponible. Les données synthétiques restent exclusivement dans les tests.
+- **32 contrôles Chromium sur fixtures** passent : Worker, intégrité, parcours, largeurs de 320 à 1 024 px, CORS, iframe et stockage indisponible. Les données synthétiques restent exclusivement dans les tests. Les nouveaux contrôles vérifient aussi le récapitulatif, les erreurs/doublons, la reprise, le défilement avec 80 propositions et les deux tris, l’interpolation effective de la barre, l’absence de répétition des anciennes animations et la réduction des mouvements.
 - **Deux parcours sur données réelles** passent : ordinateur et émulation Pixel 7 avec ralentissement CPU ×4 demandé à Chromium. Chaque parcours charge les vrais assets, propose quatre mots, reprend la partie après actualisation et trouve le mystère ; les 1 000 voisins et l’absence de dépassement horizontal sont vérifiés. Le mot contrôlé du test est « abandonner », appartenant au véritable ensemble des mystères.
 
 Les [mesures enregistrées](references/real-runtime.json) sont indicatives, réalisées sur le serveur local de cette machine cloud :

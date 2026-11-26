@@ -157,6 +157,103 @@ try {
   assert.match(await noStorage.locator('#feedback').innerText(), /sauvegarde locale/); checks++;
   await restricted.close();
 
+  // A long history catches both upward jumps for hot words and downward jumps for cold words.
+  const history = await browser.newContext({ viewport: { width: 1440, height: 1080 }, reducedMotion: 'no-preference' });
+  await history.addInitScript(game => {
+    if (!localStorage.getItem('lexicalis.save.v1')) localStorage.setItem('lexicalis.save.v1', JSON.stringify({ game }));
+  }, { schemaVersion: 1, dataId: manifest.id, target: 0,
+    entries: Array.from({ length: 80 }, (_, i) => ({ index: i + 20, kind: 'guess' })), outcome: 'playing' });
+  const historyPage = await history.newPage();
+  historyPage.on('pageerror', error => issues.push(error.message));
+  await historyPage.goto(url);
+  await historyPage.locator('#word-input:enabled').waitFor();
+  assert.equal(await historyPage.locator('#last-guess-word').innerText(), 'mot99');
+  assert.equal(await historyPage.locator('.animate-progress').count(), 0); checks++;
+  const historyScroll = historyPage.locator('.table-wrap');
+  const oldPosition = await historyScroll.evaluate(node => { node.scrollTop = 170; return node.scrollTop; });
+  assert.ok(oldPosition > 0);
+  async function historyGuess(word) {
+    await historyPage.locator('#word-input').fill(word);
+    await historyPage.locator('#guess-button').click();
+    await historyPage.locator('#guess-button:enabled').waitFor();
+  }
+  await historyGuess('astre');
+  await historyPage.waitForFunction(() => document.querySelector('#last-guess-word').textContent === 'astre');
+  assert.equal(await historyScroll.evaluate(node => node.scrollTop), oldPosition);
+  assert.equal(await historyPage.locator('#last-guess-number').innerText(), '#81');
+  assert.equal(await historyPage.locator('#last-guess-progression .progress-count').innerText(), '999 / 1 000');
+  assert.equal(await historyPage.locator('#guesses .animate-progress').count(), 1);
+  assert.equal(await historyPage.locator('#last-guess .animate-progress').count(), 1); checks++;
+  const animated = await historyPage.locator('#last-guess .progress-fill').evaluate(node => {
+    const animation = node.getAnimations().find(animation => animation.animationName === 'fill-progress');
+    if (!animation) return null;
+    animation.pause();
+    const values = [0, 325, 650].map(time => {
+      animation.currentTime = time;
+      return new DOMMatrix(getComputedStyle(node).transform).a;
+    });
+    animation.finish();
+    return values;
+  });
+  assert.ok(animated && animated[0] === 0 && animated[1] > 0 && animated[1] < animated[2]);
+  assert.ok(Math.abs(animated[2] - 0.999) < 0.0001); checks++;
+  const previousSummary = await historyPage.locator('#last-guess').innerText();
+  for (const invalid of ['inconnu', 'astre']) {
+    await historyGuess(invalid);
+    assert.equal(await historyPage.locator('#last-guess').innerText(), previousSummary);
+    assert.equal(await historyScroll.evaluate(node => node.scrollTop), oldPosition);
+    assert.equal(await historyPage.locator('#attempts').innerText(), '81');
+  }
+  checks++;
+  assert.ok(await historyPage.locator('#guesses-table').evaluate(node => parseFloat(getComputedStyle(node).fontSize) >= 16));
+  assert.ok(await historyPage.locator('#word-input').evaluate(node => parseFloat(getComputedStyle(node).fontSize) >= 18)); checks++;
+  await historyPage.reload();
+  await historyPage.locator('#word-input:enabled').waitFor();
+  assert.equal(await historyPage.locator('#last-guess-word').innerText(), 'astre');
+  assert.equal(await historyPage.locator('.animate-progress').count(), 0); checks++;
+  await historyScroll.evaluate(node => { node.scrollTop = 0; });
+  await historyGuess('mot1004');
+  await historyPage.waitForFunction(() => document.querySelector('#last-guess-word').textContent === 'mot1004');
+  assert.equal(await historyScroll.evaluate(node => node.scrollTop), 0);
+  assert.match(await historyPage.locator('#last-guess-progression').innerText(), /Hors du top/);
+  assert.equal(await historyPage.locator('#last-guess [role=meter]').count(), 0);
+  assert.equal(await historyPage.locator('.animate-progress').count(), 0); checks++;
+  await historyPage.setViewportSize({ width: 320, height: 900 });
+  assert.ok(await historyPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  const coldCellFits = await historyPage.locator('.guess-latest .temperature').evaluate(node => {
+    const range = document.createRange(); range.selectNodeContents(node);
+    const text = range.getBoundingClientRect(), cell = node.getBoundingClientRect();
+    return { fits: text.left >= cell.left - 1 && text.right <= cell.right + 1, textWidth: text.width, cellWidth: cell.width };
+  });
+  assert.ok(coldCellFits.fits, JSON.stringify(coldCellFits)); checks++;
+  await historyPage.locator('#sort').selectOption('chronological');
+  assert.equal(await historyPage.locator('#guesses .animate-progress').count(), 0);
+  const chronologicalPosition = await historyScroll.evaluate(node => { node.scrollTop = 200; return node.scrollTop; });
+  await historyGuess('lune');
+  await historyPage.waitForFunction(() => document.querySelector('#last-guess-word').textContent === 'lune');
+  assert.equal(await historyScroll.evaluate(node => node.scrollTop), chronologicalPosition);
+  assert.equal(await historyPage.locator('#last-guess-number').innerText(), '#83'); checks++;
+  await historyPage.locator('#new-button').click();
+  await historyPage.locator('#accept-confirm').click();
+  await historyPage.waitForFunction(() => document.querySelector('#attempts').textContent === '0');
+  assert.ok(await historyPage.locator('#last-guess').isHidden());
+  assert.equal(await historyScroll.evaluate(node => node.scrollTop), 0); checks++;
+  await history.close();
+
+  const calm = await browser.newContext({ reducedMotion: 'reduce' });
+  const calmPage = await calm.newPage();
+  await calmPage.goto(url);
+  await calmPage.locator('#word-input:enabled').waitFor();
+  await calmPage.locator('#word-input').fill('lune');
+  await calmPage.locator('#guess-button').click();
+  await calmPage.locator('#last-guess').waitFor();
+  const calmFill = await calmPage.locator('#last-guess .progress-fill').evaluate(node => ({
+    animation: getComputedStyle(node).animationName, scale: new DOMMatrix(getComputedStyle(node).transform).a,
+  }));
+  assert.equal(calmFill.animation, 'none');
+  assert.ok(calmFill.scale > 0.99); checks++;
+  await calm.close();
+
   mode = 'corrupt';
   await page.reload();
   await page.locator('#retry-button').waitFor();

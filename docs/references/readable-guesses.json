@@ -1,0 +1,41 @@
+{
+  "dataId": "972a8d09039d8c3879abe870",
+  "browserChecks": 32,
+  "readability": {
+    "desktopTablePx": 16,
+    "mobileTablePx": 15,
+    "desktopInputPx": 18
+  },
+  "historySeedEntries": 80,
+  "temperatureSortScrollPreserved": true,
+  "chronologicalSortScrollPreserved": true,
+  "lastGuessCardStableAfterInvalidAndDuplicate": true,
+  "lastGuessCardRestored": true,
+  "newGameHidesLastGuess": true,
+  "progressFillDurationMs": 650,
+  "onlyNewTop1000BarsAnimate": true,
+  "interpolatedFillMeasured": true,
+  "reducedMotionHonored": true,
+  "minimumViewportWidth": 320,
+  "realDataScenarios": [
+    "desktop",
+    "mobile-emulated"
+  ],
+  "realDataSummaryMatchesTable": true,
+  "realArchiveAndBloggerTests": {
+    "archiveIntegrity": true,
+    "allInventoryHashesValid": true,
+    "projectSubpath": "/Lexicalis/",
+    "realDataDesktopAndMobile": true,
+    "separateOriginIframe": true,
+    "parentStylesIsolated": true,
+    "iframeGuessAccepted": true,
+    "horizontalOverflow": false,
+    "fullViewportIframe": true,
+    "themeColumnEscaped": true,
+    "compactHeaderAndRequestedRemovals": true,
+    "limit": "Test local du paquet et d’une iframe simulée ; le rendu du nouveau bloc sur le vrai thème Blogger reste à vérifier après remplacement."
+  },
+  "archiveSha256": "9645b014ff611042b9176d229bd721f61b5bc2ee40700d6d07e135ec06949eca",
+  "liveSiteUpdatedByAgent": false
+}

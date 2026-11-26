@@ -58,6 +58,9 @@ try {
     }
     assert.equal(await page.locator('#attempts').innerText(), String(sample.length));
     assert.equal(await page.locator('#guesses tr').count(), sample.length);
+    assert.equal(await page.locator('#last-guess-word').innerText(), sample.at(-1));
+    assert.equal(await page.locator('#last-guess-temperature').innerText(),
+      await page.locator('#guesses .guess-latest .temperature').innerText());
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     const displayedScores = await page.locator('#guesses tr').allTextContents();
     await page.screenshot({ path: path.join(root, `test-results/real-${mode}.png`), fullPage: true });
@@ -65,6 +68,7 @@ try {
     await page.reload();
     await page.locator('#word-input:enabled').waitFor({ timeout: 180000 });
     assert.equal(await page.locator('#attempts').innerText(), String(sample.length));
+    assert.equal(await page.locator('#last-guess-word').innerText(), sample.at(-1));
     await page.locator('#word-input').fill(answer);
     await page.locator('#guess-button').click();
     await page.locator('#result').waitFor();
@@ -76,7 +80,7 @@ try {
     results.push({ mode, loadMs: Math.round(loadMs), lastGuessRoundTripMs: Math.round(lastGuessMs),
       mainThreadIntervalMaxMs: Math.round(Math.max(initialTiming.longest, timing.longest)),
       mainThreadTicks: initialTiming.ticks + timing.ticks,
-      displayedScores, restored: true, won: true, neighbors: 1000, horizontalOverflow: false,
+      displayedScores, lastGuessDetailsMatchTable: true, restored: true, won: true, neighbors: 1000, horizontalOverflow: false,
       cpuSlowdown: mode === 'mobile-emulated' ? 4 : 1 });
     await context.close();
   }
