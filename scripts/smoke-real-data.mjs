@@ -72,7 +72,8 @@ try {
     await page.locator('#word-input').fill(answer);
     await page.locator('#guess-button').click();
     await page.locator('#result').waitFor();
-    assert.match(await page.locator('#result').innerText(), /trouvé/);
+    assert.equal(await page.locator('#result strong').innerText(), answer);
+    assert.doesNotMatch(await page.locator('#result').innerText(), /votre étoile|nouvelle exploration/);
     assert.equal(await page.locator('#neighbors li').count(), 1000);
     assert.equal(await page.locator('#guesses tr:first-child .temperature').innerText(), '100,00 °C');
     const timing = await page.evaluate(() => window.testTicks);

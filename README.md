@@ -85,9 +85,11 @@ Le tirage aléatoire utilise `crypto.getRandomValues` avec rejet pour éviter le
 
 ## Lisibilité et retour des propositions
 
-Le tableau utilise une police de 16 px sur ordinateur et 15 px sur mobile, avec des en-têtes abrégés sur les petits écrans. Sous le champ de saisie, un récapitulatif affiche la dernière proposition acceptée : numéro d’essai, mot, température et progression, ou « Hors du top 1 000 ». Les indices y sont identifiés séparément. Une saisie inconnue ou un doublon laisse le récapitulatif précédent en place ; la reprise recharge le dernier mot sauvegardé.
+Le tableau utilise une police de 16 px sur ordinateur et 15 px sur mobile, avec des en-têtes abrégés sur les petits écrans. Ses lignes ont 8 px de marge intérieure verticale. Sous le champ, la dernière proposition acceptée est affichée sur **une seule ligne identique à celle de la liste**, avec les mêmes colonnes : numéro, mot, température et progression, ou un tiret hors du top 1 000. Les indices y portent la même marque que dans la liste.
 
-Une nouvelle proposition conserve exactement la position de défilement de la liste, quel que soit son classement et le tri choisi. Un changement de tri ou une nouvelle partie ramène volontairement la liste en haut. Pour un nouveau mot du top 1 000, seule sa barre se remplit en 650 ms, dans le tableau et dans le récapitulatif. Les anciennes barres et celles restaurées restent stables. La préférence de réduction des animations du navigateur est respectée.
+La liste est toujours classée du plus chaud au plus froid ; le choix de tri et le titre « Vos explorations » ont été retirés. Les anciennes préférences de tri sont ignorées, sans perdre la partie sauvegardée. Une nouvelle proposition conserve la position de défilement ; une nouvelle partie la remet en haut. Pour un nouveau mot du top 1 000, seules ses barres se remplissent en 650 ms. La reprise n’anime pas les anciennes barres et la préférence de réduction des mouvements est respectée.
+
+Le bloc de messages `#feedback` et la boussole ont été retirés. Les mots inconnus et doublons sont signalés par la validation native du champ, sans compter d’essai ni remplacer le dernier mot valide. Le chargement apparaît dans le texte indicatif du champ ; en cas d’échec, un bouton permet de réessayer. La victoire affiche le mot et les nombres d’essais et d’indices.
 
 ## Vérifications
 
