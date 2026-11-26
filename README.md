@@ -83,6 +83,12 @@ Le tirage aléatoire utilise `crypto.getRandomValues` avec rejet pour éviter le
 
 `localStorage` conserve l’identifiant des données, le mystère, les entrées, l’issue et le tri. Les scores sont recalculés à la reprise ; une version incompatible ou une sauvegarde invalide provoque une nouvelle partie expliquée. Si le stockage est refusé, la partie reste jouable avec un avertissement. En iframe, sa disponibilité dépend du navigateur et de ses règles de stockage tiers. Le mystère est présent côté client : ce jeu sans compte n’a pas de protection anti-triche.
 
+## Lisibilité et retour des propositions
+
+Le tableau utilise une police de 16 px sur ordinateur et 15 px sur mobile, avec des en-têtes abrégés sur les petits écrans. Sous le champ de saisie, un récapitulatif affiche la dernière proposition acceptée : numéro d’essai, mot, température et progression, ou « Hors du top 1 000 ». Les indices y sont identifiés séparément. Une saisie inconnue ou un doublon laisse le récapitulatif précédent en place ; la reprise recharge le dernier mot sauvegardé.
+
+Une nouvelle proposition conserve exactement la position de défilement de la liste, quel que soit son classement et le tri choisi. Un changement de tri ou une nouvelle partie ramène volontairement la liste en haut. Pour un nouveau mot du top 1 000, seule sa barre se remplit en 650 ms, dans le tableau et dans le récapitulatif. Les anciennes barres et celles restaurées restent stables. La préférence de réduction des animations du navigateur est respectée.
+
 ## Vérifications
 
 ```sh

@@ -9,7 +9,7 @@
   --line:#303b48;
   --radius:20px;
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  font-size:15px
+  font-size:16px
 }
 * {
   box-sizing:border-box
@@ -62,7 +62,7 @@ button,select {
 
 .text-button {
   background:none;
-  font-size:12px;
+  font-size:16px;
   color:var(--muted);
   display:inline-flex;
   align-items:center;
@@ -78,12 +78,12 @@ button,select {
   width:19px;
   height:19px;
   border-radius:50%;
-  font-size:11px;
+  font-size:14px;
   line-height:17px
 }
 
 .eyebrow {
-  font-size:10px;
+  font-size:13px;
   font-weight:600;
   letter-spacing:2px;
   color:var(--gold)
@@ -116,7 +116,7 @@ button,select {
   gap:8px
 }
 .live-label {
-  font-size:9px;
+  font-size:12px;
   letter-spacing:1.5px;
   color:#bbcabf;
   display:flex;
@@ -143,7 +143,7 @@ button,select {
   line-height:1
 }
 .counters p span {
-  font-size:12px;
+  font-size:16px;
   color:var(--muted);
   margin-left:3px
 }
@@ -155,7 +155,7 @@ button,select {
 }
 
 #guess-form label {
-  font-size:12px;
+  font-size:16px;
   display:block;
   margin-bottom:10px;
   color:#d4dce3
@@ -172,7 +172,7 @@ input {
   background:#101924;
   border-radius:10px;
   color:var(--ink);
-  font-size:15px;
+  font-size:18px;
   outline:none
 }
 input::placeholder {
@@ -189,7 +189,7 @@ input:disabled {
   background:var(--gold);
   color:#1f242b;
   border:1px solid var(--gold);
-  font-size:12px;
+  font-size:16px;
   font-weight:650;
   padding:13px 18px;
   border-radius:10px;
@@ -208,7 +208,7 @@ input:disabled {
   min-height:42px;
   padding:9px 0 5px;
   color:var(--muted);
-  font-size:11px;
+  font-size:14px;
   overflow-wrap:anywhere
 }
 .feedback.error {
@@ -229,12 +229,12 @@ input:disabled {
   padding:23px 0 16px
 }
 .list-toolbar h2 {
-  font-size:12px;
+  font-size:16px;
   font-weight:500;
   white-space:nowrap
 }
 .list-toolbar h2 span {
-  font-size:9px;
+  font-size:12px;
   background:#27323f;
   color:var(--muted);
   padding:2px 6px;
@@ -242,12 +242,12 @@ input:disabled {
   margin-left:5px
 }
 .list-toolbar label {
-  font-size:9px;
+  font-size:12px;
   color:var(--muted);
   white-space:nowrap
 }
 select {
-  font-size:10px;
+  font-size:13px;
   background:transparent;
   border:0;
   border-bottom:1px solid #596470;
@@ -263,16 +263,19 @@ select option {
   max-height:560px;
   overflow-y:auto;
   scrollbar-color:#536071 transparent;
-  scrollbar-width:thin
+  scrollbar-width:thin;
+  overflow-anchor:none;
+  scrollbar-gutter:stable;
+  scroll-behavior:auto
 }
 table {
   width:100%;
   border-collapse:collapse;
   table-layout:fixed;
-  font-size:12px
+  font-size:16px
 }
 th {
-  font-size:9px;
+  font-size:12px;
   font-weight:400;
   color:var(--muted);
   text-align:left;
@@ -303,7 +306,7 @@ td {
 }
 td:first-child {
   color:var(--muted);
-  font-size:10px;
+  font-size:13px;
   padding-left:0
 }
 td:nth-child(2) {
@@ -329,7 +332,7 @@ td:last-child {
   vertical-align:middle
 }
 .hint-tag {
-  font-size:9px;
+  font-size:12px;
   color:var(--gold)
 }
 .temperature {
@@ -341,35 +344,32 @@ td:last-child {
   display:flex;
   align-items:center;
   gap:8px;
-  font-size:10px;
+  font-size:13px;
   font-variant-numeric:tabular-nums;
   color:var(--temperature,var(--muted))
 }
-.progression meter {
-  appearance:none;
-  width:100%;
+.progress-track {
+  display:block;
+  flex:1;
   min-width:15px;
-  height:5px;
+  height:8px;
+  overflow:hidden;
   background:#333e4a;
-  border:0;
-  border-radius:5px
+  border-radius:8px;
 }
-.progression meter::-webkit-meter-bar {
-  height:5px;
-  background:#333e4a;
-  border:0
+.progress-fill {
+  display:block;
+  width:100%;
+  height:100%;
+  background:var(--temperature,var(--gold));
+  border-radius:inherit;
+  transform:scaleX(var(--progress));
+  transform-origin:left center;
 }
-.progression meter::-webkit-meter-optimum-value {
-  background:var(--temperature);
-  border-radius:5px
-}
-.progression meter::-moz-meter-bar {
-  background:var(--temperature);
-  border-radius:5px
-}
-.progression span {
-  min-width:26px;
-  text-align:right
+.progress-count {
+  min-width:4ch;
+  text-align:right;
+  white-space:nowrap;
 }
 .empty {
   text-align:center;
@@ -386,7 +386,7 @@ td:last-child {
   margin:10px 0
 }
 .empty p {
-  font-size:12px;
+  font-size:16px;
   color:var(--muted);
   line-height:1.8
 }
@@ -406,7 +406,7 @@ td:last-child {
   margin:12px 0
 }
 .compass-card>p:not(.eyebrow) {
-  font-size:12px;
+  font-size:16px;
   color:#b4c1c7;
   line-height:1.8
 }
@@ -420,13 +420,13 @@ td:last-child {
   display:flex;
   justify-content:space-between;
   color:var(--muted);
-  font-size:9px
+  font-size:12px
 }
 .compass-card .rank-explanation {
   margin-top:22px;
   padding-top:20px;
   border-top:1px solid #ffffff12;
-  font-size:11px!important
+  font-size:14px!important
 }
 .rank-explanation strong {
   font-weight:500;
@@ -438,7 +438,7 @@ td:last-child {
   border-top:1px solid #ffffff12
 }
 .best>span {
-  font-size:8px;
+  font-size:11px;
   letter-spacing:1px;
   color:var(--muted)
 }
@@ -452,11 +452,11 @@ td:last-child {
 .best strong {
   overflow-wrap:anywhere;
   font-weight:500;
-  font-size:14px
+  font-size:17px
 }
 .best b {
   font-weight:500;
-  font-size:12px;
+  font-size:16px;
   white-space:nowrap;
   color:var(--temperature)
 }
@@ -476,13 +476,13 @@ td:last-child {
 }
 .help-card p {
   color:var(--muted);
-  font-size:11px
+  font-size:14px
 }
 .secondary {
   border:1px solid #57616a;
   border-radius:9px;
   background:transparent;
-  font-size:12px;
+  font-size:16px;
   padding:11px 14px
 }
 .secondary:hover:not(:disabled) {
@@ -503,7 +503,7 @@ td:last-child {
   padding:8px 0;
   color:var(--muted);
   background:none;
-  font-size:10px;
+  font-size:13px;
   text-decoration:underline;
   text-underline-offset:3px
 }
@@ -514,7 +514,7 @@ td:last-child {
   padding:16px;
   border-radius:12px;
   margin-bottom:20px;
-  font-size:13px
+  font-size:16px
 }
 .result strong {
   font:24px Georgia,serif;
@@ -523,7 +523,7 @@ td:last-child {
   margin:4px 0
 }
 .result p {
-  font-size:12px;
+  font-size:16px;
   color:var(--muted)
 }
 .neighbors {
@@ -536,7 +536,7 @@ td:last-child {
   font:24px Georgia,serif
 }
 .neighbors>p {
-  font-size:12px;
+  font-size:16px;
   color:var(--muted);
   margin-top:9px
 }
@@ -545,13 +545,13 @@ td:last-child {
 }
 .neighbors summary {
   cursor:pointer;
-  font-size:12px;
+  font-size:16px;
   color:var(--gold)
 }
 .neighbors ol {
   max-height:400px;
   overflow:auto;
-  font-size:12px;
+  font-size:16px;
   columns:2;
   column-gap:40px;
   margin-top:20px;
@@ -583,10 +583,10 @@ footer {
 }
 .footer-brand span {
   color:var(--muted);
-  font-size:13px
+  font-size:16px
 }
 footer p {
-  font-size:9px;
+  font-size:12px;
   line-height:1.9;
   max-width:950px
 }
@@ -616,7 +616,7 @@ dialog::backdrop {
   margin:16px 0 22px
 }
 .dialog-inner>p:not(.eyebrow),.dialog-inner li {
-  font-size:13px;
+  font-size:16px;
   color:#ced4db
 }
 .dialog-inner li {
@@ -627,7 +627,7 @@ dialog::backdrop {
   margin:20px 0
 }
 .dialog-inner .muted {
-  font-size:11px!important;
+  font-size:14px!important;
   color:var(--muted)!important;
   margin:20px 0
 }
@@ -682,12 +682,12 @@ dialog::backdrop {
   }
 
   #rules-button {
-    font-size:10px;
+    font-size:13px;
     gap:5px
   }
 
   .eyebrow {
-    font-size:8px;
+    font-size:11px;
     letter-spacing:1.4px
   }
 
@@ -724,7 +724,7 @@ dialog::backdrop {
     font-size:0
   }
   select {
-    font-size:10px
+    font-size:13px
   }
   .table-wrap {
     min-height:260px
@@ -741,17 +741,17 @@ dialog::backdrop {
     font-size:22px
   }
   .compass-card>p:not(.eyebrow) {
-    font-size:11px
+    font-size:14px
   }
   .heat-scale {
     margin-top:19px
   }
   .scale-labels {
-    font-size:8px;
+    font-size:11px;
     gap:6px
   }
   .compass-card .rank-explanation {
-    font-size:10px!important;
+    font-size:13px!important;
     margin-top:17px;
     padding-top:15px
   }
@@ -762,10 +762,10 @@ dialog::backdrop {
     font-size:19px
   }
   .help-card p {
-    font-size:10px
+    font-size:13px
   }
   .help-card .secondary {
-    font-size:10px;
+    font-size:13px;
     padding:10px 8px;
     margin-top:18px
   }
@@ -778,7 +778,7 @@ dialog::backdrop {
     gap:3px
   }
   .best>span {
-    font-size:7px
+    font-size:11px
   }
   .neighbors {
     padding:20px 16px
@@ -790,7 +790,7 @@ dialog::backdrop {
     margin-top:30px
   }
   footer p {
-    font-size:8px
+    font-size:11px
   }
   .dialog-inner {
     padding:25px
@@ -805,10 +805,10 @@ dialog::backdrop {
     display:none
   }
   .list-toolbar h2 {
-    font-size:11px
+    font-size:14px
   }
   th {
-    font-size:8px
+    font-size:11px
   }
   th:first-child {
     width:28px
@@ -832,7 +832,7 @@ dialog::backdrop {
   }
 
   #rules-button {
-    font-size:9px
+    font-size:12px
   }
   .compass-card h2 {
     font-size:24px
@@ -904,5 +904,91 @@ main {
   }
   main {
     padding-top:16px;
+  }
+}
+
+/* Readable feedback stays beside the input while the history stays in place. */
+.last-guess {
+  margin:0 0 18px;
+  padding:14px 16px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#101924;
+}
+.last-guess-label {
+  margin-bottom:8px;
+  color:var(--muted);
+  font-size:14px;
+}
+.last-guess-details {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px 12px;
+}
+.last-guess-number {
+  color:var(--muted);
+  font-size:14px;
+  font-variant-numeric:tabular-nums;
+}
+#last-guess-word {
+  font-size:19px;
+  font-weight:600;
+  overflow-wrap:anywhere;
+}
+#last-guess-temperature {
+  font-size:17px;
+  font-variant-numeric:tabular-nums;
+}
+#last-guess-progression {
+  grid-column:1/-1;
+}
+.last-guess .progression {
+  font-size:15px;
+}
+.outside-ranking {
+  color:var(--muted);
+  font-size:14px;
+}
+.column-label-compact {
+  display:none;
+}
+@media(max-width:680px) {
+  table {
+    font-size:15px;
+  }
+  .last-guess {
+    padding:12px;
+  }
+}
+@media(max-width:480px) {
+  .column-label-full {
+    display:none;
+  }
+  .column-label-compact {
+    display:inline;
+  }
+  td.temperature {
+    font-size:14px;
+  }
+}
+@media(max-width:360px) {
+  th:nth-child(2) {
+    width:29%;
+  }
+  th:nth-child(3) {
+    width:30%;
+  }
+  .list-toolbar {
+    flex-wrap:wrap;
+  }
+}
+@media(prefers-reduced-motion:no-preference) {
+  .animate-progress {
+    animation:fill-progress 650ms cubic-bezier(.2,.7,.2,1) both;
+  }
+  @keyframes fill-progress {
+    from { transform:scaleX(0); }
+    to { transform:scaleX(var(--progress)); }
   }
 }

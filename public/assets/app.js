@@ -67,7 +67,41 @@ function element(tag, text, className) {
   return node;
 }
 
-function renderTable() {
+function progression(entry, animate = false, fullLabel = false) {
+  const wrapper = element('div', undefined, 'progression');
+  const track = element('span', undefined, 'progress-track');
+  track.setAttribute('role', 'meter');
+  track.setAttribute('aria-label', 'Progression du mot');
+  track.setAttribute('aria-valuemin', '0');
+  track.setAttribute('aria-valuemax', '1000');
+  track.setAttribute('aria-valuenow', String(entry.progression));
+  track.setAttribute('aria-valuetext', `${entry.progression} sur 1 000`);
+  const fill = element('span', undefined, 'progress-fill');
+  fill.setAttribute('aria-hidden', 'true');
+  fill.style.setProperty('--progress', entry.progression / 1000);
+  if (animate) fill.classList.add('animate-progress');
+  track.append(fill);
+  wrapper.append(track, element('span', fullLabel ? `${entry.progression} / 1 000` : entry.progression, 'progress-count'));
+  return wrapper;
+}
+
+function renderLastGuess(animatedSequence = null) {
+  const entry = current.entries.at(-1);
+  $('last-guess').hidden = !entry;
+  if (!entry) return;
+  $('last-guess-label').textContent = entry.kind === 'hint' ? 'Dernier indice' : 'Dernière proposition';
+  $('last-guess-number').textContent = entry.kind === 'hint' ? '✦' : `#${entry.attempt}`;
+  $('last-guess-word').textContent = entry.word;
+  $('last-guess-temperature').textContent = temperature(entry.temperature);
+  $('last-guess').style.setProperty('--temperature', heat(entry.temperature));
+  $('last-guess-progression').replaceChildren(entry.progression
+    ? progression(entry, entry.sequence === animatedSequence, true)
+    : element('span', 'Hors du top 1 000', 'outside-ranking'));
+}
+
+function renderTable({ animatedSequence = null, resetScroll = false } = {}) {
+  const wrap = document.querySelector('.table-wrap');
+  const scrollTop = resetScroll ? 0 : wrap.scrollTop;
   const entries = [...current.entries];
   const chronological = $('sort').value === 'chronological';
   entries.sort(chronological ? (a, b) => b.sequence - a.sequence :
@@ -91,14 +125,7 @@ function renderTable() {
     row.append(word, element('td', temperature(entry.temperature), 'numeric temperature'));
     const rank = element('td');
     if (entry.progression) {
-      const wrapper = element('div', undefined, 'progression');
-      const meter = element('meter');
-      meter.min = 0;
-      meter.max = 1000;
-      meter.value = entry.progression;
-      meter.setAttribute('aria-label', `${entry.progression} sur 1 000`);
-      wrapper.append(meter, element('span', entry.progression));
-      rank.append(wrapper);
+      rank.append(progression(entry, entry.sequence === animatedSequence));
     } else {
       rank.textContent = '—';
       rank.setAttribute('aria-label', 'Hors des 1 000 mots les plus proches');
@@ -109,18 +136,18 @@ function renderTable() {
   $('guesses').replaceChildren(fragment);
   $('entry-count').textContent = current.entries.length;
   $('empty').hidden = entries.length > 0;
-  const latest = $('guesses').querySelector('.guess-latest');
-  // Scroll only the internal list, so mobile focus stays beside the input.
-  const wrap = document.querySelector('.table-wrap');
-  if (latest) wrap.scrollTop = Math.max(0, latest.offsetTop - wrap.offsetTop - 42);
+  // Keep the player's scroll position even when a new row sorts above it.
+  wrap.scrollTop = scrollTop;
 }
 
-function render() {
+function render({ animateLatest = false, resetScroll = false } = {}) {
   $('attempts').textContent = current.attempts;
   $('attempt-label').textContent = current.attempts > 1 ? 'essais' : 'essai';
   $('hint-count').textContent = current.hints;
   $('hint-label').textContent = current.hints > 1 ? 'indices' : 'indice';
-  renderTable();
+  const animatedSequence = animateLatest ? current.entries.at(-1)?.sequence : null;
+  renderTable({ animatedSequence, resetScroll });
+  renderLastGuess(animatedSequence);
   const best = current.entries.reduce((found, entry) => !found || entry.temperature > found.temperature ? entry : found, null);
   $('best').hidden = !best;
   if (best) {
@@ -158,7 +185,7 @@ async function action(name, payload) {
     current = result.state;
     snapshot = result.snapshot;
     persist();
-    render();
+    render({ animateLatest: name === 'guess' || name === 'hint', resetScroll: name === 'new' });
     feedback(saveWarning || (name === 'hint' ? 'Un nouveau mot voisin a rejoint vos explorations.' :
       name === 'new' ? 'Une nouvelle partie commence. À vous de jouer.' :
       current.outcome === 'won' ? 'Bravo, vous avez trouvé le mot mystère !' :
@@ -244,7 +271,7 @@ $('guess-form').addEventListener('submit', event => {
   event.preventDefault();
   void action('guess', { word: $('word-input').value });
 });
-$('sort').addEventListener('change', () => { if (current) { renderTable(); persist(); } });
+$('sort').addEventListener('change', () => { if (current) { renderTable({ resetScroll: true }); persist(); } });
 $('hint-button').addEventListener('click', () => void action('hint'));
 $('give-up-button').addEventListener('click', () => confirmAction('give-up'));
 $('new-button').addEventListener('click', () => confirmAction('new'));
