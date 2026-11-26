@@ -1,0 +1,64 @@
+{
+  "benchmark": {
+    "dataId": "972a8d09039d8c3879abe870",
+    "words": 61091,
+    "dimensions": 500,
+    "fileLoadMs": 710.3283670000001,
+    "newGameMs": 142.39649699999995,
+    "guessMs": 0.40562899999997626,
+    "vectorMiB": 116.52183532714844,
+    "processRssMiB": 175.765625,
+    "environment": "v24.22.3, linux/x64",
+    "note": "Mesure Node sur cette machine ; ne remplace pas un profilage de navigateur et Android réel."
+  },
+  "browser": {
+    "dataId": "972a8d09039d8c3879abe870",
+    "realData": true,
+    "words": 61091,
+    "mysteries": 5006,
+    "dimensions": 500,
+    "vectorMiB": 116.52183532714844,
+    "sourceSha256": "8ec240bf8270138f5bb29232cf93e3f44060a42cacec57b702dbe2dbf67d7976",
+    "controlledTarget": "abandonner",
+    "browser": "156.0.8078.79",
+    "results": [
+      {
+        "mode": "desktop",
+        "loadMs": 2582,
+        "lastGuessRoundTripMs": 102,
+        "mainThreadIntervalMaxMs": 174,
+        "mainThreadTicks": 221,
+        "displayedScores": [
+          "3univers6,25 °C—",
+          "4jeu2,98 °C—",
+          "1ordinateur-0,84 °C—",
+          "2avatar-1,16 °C—"
+        ],
+        "restored": true,
+        "won": true,
+        "neighbors": 1000,
+        "horizontalOverflow": false,
+        "cpuSlowdown": 1
+      },
+      {
+        "mode": "mobile-emulated",
+        "loadMs": 3178,
+        "lastGuessRoundTripMs": 140,
+        "mainThreadIntervalMaxMs": 383,
+        "mainThreadTicks": 203,
+        "displayedScores": [
+          "3univers6,25 °C—",
+          "4jeu2,98 °C—",
+          "1ordinateur-0,84 °C—",
+          "2avatar-1,16 °C—"
+        ],
+        "restored": true,
+        "won": true,
+        "neighbors": 1000,
+        "horizontalOverflow": false,
+        "cpuSlowdown": 4
+      }
+    ],
+    "limitation": "Serveur local sur ordinateur cloud. Le mode mobile est une émulation Chromium avec CPU ralenti, pas un appareil Android physique ni un débit Internet réel."
+  }
+}

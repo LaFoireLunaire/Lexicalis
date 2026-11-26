@@ -1,0 +1,11 @@
+node_modules/
+.venv/
+.cache/
+__pycache__/
+*.pyc
+public/data/*
+!public/data/.gitkeep
+test-results/
+
+
+dist/

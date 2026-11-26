@@ -1,0 +1,214 @@
+// Isolated synthetic mathematical fixtures. Never writes or serves them in public/data.
+import { chromium, devices } from 'playwright';
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { createServer } from 'node:http';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const publicRoot = path.resolve(fileURLToPath(new URL('../public/', import.meta.url)));
+const count = 1005, dimensions = 500;
+const words = Array.from({ length: count }, (_, i) => `mot${i}`);
+words[0] = 'étoile'; words[1] = 'astre'; words[2] = 'lune'; words[3] = 'école';
+const vectors = Buffer.alloc(count * dimensions * 4);
+for (let i = 0; i < count; i++) {
+  const angle = i / (count - 1) * Math.PI;
+  vectors.writeFloatLE(Math.cos(angle), i * dimensions * 4);
+  vectors.writeFloatLE(Math.sin(angle), i * dimensions * 4 + 4);
+}
+const assets = {
+  vocabulary: Buffer.from(JSON.stringify(words)),
+  targets: Buffer.from('[0]'), vectors,
+};
+const manifest = {
+  schemaVersion: 1, id: 'TEST-FIXTURE-NOT-A-REAL-MODEL', dimensions, count, targetCount: 1,
+  dtype: 'float32-le', normalized: true,
+  files: Object.fromEntries(Object.entries(assets).map(([name, bytes]) => [name, {
+    url: name, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'),
+  }])),
+};
+let mode = 'missing';
+const server = createServer(async (req, res) => {
+  const pathname = new URL(req.url, 'http://test.local').pathname;
+  res.setHeader('Cache-Control', 'no-store');
+  if (pathname.startsWith('/data/')) {
+    const name = pathname.slice('/data/'.length);
+    if (mode === 'missing') { res.writeHead(404).end('Absent'); return; }
+    if (name === 'manifest.json') {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(manifest)); return;
+    }
+    if (assets[name]) {
+      const buffer = Buffer.from(assets[name]);
+      if (mode === 'corrupt' && name === 'vectors') buffer[100] ^= 1;
+      res.end(buffer); return;
+    }
+  }
+  try {
+    const relative = decodeURIComponent(pathname === '/' ? '/index.html' : pathname);
+    const filename = path.resolve(publicRoot, '.' + relative);
+    if (!filename.startsWith(publicRoot + path.sep)) { res.writeHead(403).end(); return; }
+    const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' }[path.extname(filename)] || 'application/octet-stream';
+    res.setHeader('Content-Type', mime);
+    res.end(await readFile(filename));
+  } catch { res.writeHead(404).end('Absent'); }
+});
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+const url = `http://127.0.0.1:${server.address().port}`;
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', headless: true });
+let checks = 0;
+const issues = [];
+try {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1080 } });
+  const page = await context.newPage();
+  page.setDefaultTimeout(15000);
+  page.on('pageerror', error => issues.push(error.message));
+  await page.goto(url);
+  await page.getByRole('button', { name: 'Réessayer le chargement' }).waitFor();
+  assert.match(await page.locator('#feedback').innerText(), /dictionnaire.*disponible/);
+  assert.ok(await page.locator('#word-input').isDisabled()); checks++;
+  await page.getByRole('button', { name: 'Comment jouer' }).click();
+  assert.ok(await page.locator('#rules-dialog').isVisible());
+  await page.getByRole('button', { name: 'À moi de jouer' }).click(); checks++;
+  mode = 'valid';
+  const loadStart = performance.now();
+  await page.getByRole('button', { name: 'Réessayer le chargement' }).click();
+  await page.locator('#word-input:enabled').waitFor();
+  const fixtureLoadMs = performance.now() - loadStart;
+  async function guess(word) {
+    await page.locator('#word-input').fill(word);
+    await page.getByRole('button', { name: 'Proposer' }).click();
+    await page.locator('#guess-button:enabled').waitFor();
+  }
+  await guess('inconnu');
+  assert.match(await page.locator('#feedback').innerText(), /dictionnaire/);
+  assert.equal(await page.locator('#attempts').innerText(), '0'); checks++;
+  await guess('  LUNE  ');
+  await page.locator('#guesses tr').waitFor();
+  assert.equal(await page.locator('#attempts').innerText(), '1');
+  assert.equal(await page.locator('#guesses tr').count(), 1); checks++;
+  await guess('lune');
+  assert.match(await page.locator('#feedback').innerText(), /déjà/);
+  assert.equal(await page.locator('#attempts').innerText(), '1'); checks++;
+  await page.getByRole('button', { name: 'Obtenir un indice' }).click();
+  await page.waitForFunction(() => document.querySelector('#hint-count').textContent === '1');
+  assert.equal(await page.locator('#attempts').innerText(), '1');
+  assert.equal(await page.locator('.guess-latest').count(), 1); checks++;
+  await page.locator('#sort').selectOption('chronological');
+  await page.reload();
+  await page.locator('#word-input:enabled').waitFor();
+  assert.equal(await page.locator('#sort').inputValue(), 'chronological');
+  assert.equal(await page.locator('#guesses tr').count(), 2);
+  assert.equal(await page.locator('#hint-count').innerText(), '1'); checks++;
+  await page.getByRole('button', { name: 'Abandonner cette partie' }).click();
+  await page.getByRole('button', { name: 'Continuer à chercher' }).click();
+  assert.ok(await page.locator('#word-input').isEnabled());
+  await page.getByRole('button', { name: 'Abandonner cette partie' }).click();
+  await page.getByRole('button', { name: 'Abandonner et révéler' }).click();
+  await page.locator('#result').waitFor();
+  assert.match(await page.locator('#result').innerText(), /étoile/);
+  assert.equal(await page.locator('#neighbors li').count(), 1000);
+  assert.ok(await page.locator('#word-input').isDisabled()); checks++;
+  await page.getByRole('button', { name: 'Nouvelle partie', exact: false }).click();
+  await page.locator('#word-input:enabled').waitFor();
+  await page.locator('#word-input').fill(' E\u0301TOILE ');
+  await page.getByRole('button', { name: 'Proposer' }).click();
+  await page.waitForFunction(() => document.querySelector('#result').textContent.includes('étoile'));
+  assert.match(await page.locator('#result').innerText(), /trouvé/);
+  assert.equal(await page.locator('#attempts').innerText(), '1'); checks++;
+  await page.reload();
+  await page.locator('#result').waitFor();
+  assert.match(await page.locator('#result').innerText(), /trouvé/); checks++;
+  await page.getByRole('button', { name: 'Nouvelle partie', exact: false }).click();
+  await page.locator('#word-input:enabled').waitFor();
+  await guess('école');
+  await page.getByRole('button', { name: 'Nouvelle partie', exact: false }).click();
+  await page.getByRole('button', { name: 'Continuer à chercher' }).click();
+  assert.equal(await page.locator('#attempts').innerText(), '1'); checks++;
+  await mkdir('test-results', { recursive: true });
+  await page.screenshot({ path: 'test-results/desktop.png', fullPage: true });
+
+  for (const width of [320, 360, 390, 768, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    const overflow = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth, elements: [...document.querySelectorAll('body *')].filter(el => el.getBoundingClientRect().right > innerWidth + 1).map(el => ({ tag: el.tagName, className: el.className, right: el.getBoundingClientRect().right })) }));
+    assert.ok(overflow.scroll <= overflow.width, `Horizontal overflow: ${JSON.stringify(overflow)}`);
+    assert.ok(await page.locator('#guess-button').isVisible()); checks++;
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: 'test-results/mobile.png', fullPage: true });
+  const mobile = await browser.newContext({ ...devices['Pixel 7'] });
+  const mobilePage = await mobile.newPage();
+  await mobilePage.goto(url);
+  await mobilePage.locator('#word-input:enabled').waitFor();
+  await mobilePage.locator('#word-input').fill('étoile');
+  await mobilePage.getByRole('button', { name: 'Proposer' }).tap();
+  await mobilePage.locator('#result').waitFor();
+  assert.match(await mobilePage.locator('#result').innerText(), /trouvé/); checks++;
+  await mobile.close();
+
+  const restricted = await browser.newContext();
+  await restricted.addInitScript(() => Object.defineProperty(window, 'localStorage', {
+    get() { throw new DOMException('Storage unavailable', 'SecurityError'); },
+  }));
+  const noStorage = await restricted.newPage();
+  await noStorage.goto(url);
+  await noStorage.locator('#word-input:enabled').waitFor();
+  assert.match(await noStorage.locator('#feedback').innerText(), /sauvegarde locale/); checks++;
+  await restricted.close();
+
+  mode = 'corrupt';
+  await page.reload();
+  await page.locator('#retry-button').waitFor();
+  assert.match(await page.locator('#feedback').innerText(), /intégrité/);
+  assert.ok(await page.locator('#word-input').isDisabled()); checks++;
+  mode = 'valid';
+  const origin = new URL(url).origin;
+  const external = createServer((req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Content-Type', 'application/json');
+    if (req.url === '/manifest.json') {
+      const remoteManifest = { ...manifest, files: Object.fromEntries(Object.entries(manifest.files)
+        .map(([key, value]) => [key, { ...value, url: key }])) };
+      // Manifest and every vector/vocabulary asset are served cross origin.
+      res.end(JSON.stringify(remoteManifest));
+    } else if (assets[req.url.slice(1)]) {
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.end(assets[req.url.slice(1)]);
+    } else if (req.url === '/blogger.html') {
+      res.setHeader('Content-Type', 'text/html');
+      res.end(`<style>body{margin:0;background:pink}table{display:none}iframe{width:100%;height:1500px;border:0}</style><iframe title="Lexicalis" src="${url}"></iframe>`);
+    } else res.writeHead(404).end();
+  });
+  await new Promise(resolve => external.listen(0, '127.0.0.1', resolve));
+  try {
+    const externalContext = await browser.newContext();
+    await externalContext.addInitScript(manifestUrl => {
+      window.LEXICALIS_CONFIG = { manifestUrl };
+    }, `http://127.0.0.1:${external.address().port}/manifest.json`);
+    const remotePage = await externalContext.newPage();
+    await remotePage.goto(url);
+    await remotePage.locator('#word-input:enabled').waitFor();
+    assert.match(await remotePage.locator('#feedback').innerText(), /prêt/); checks++;
+    const embedPage = await externalContext.newPage();
+    await embedPage.setViewportSize({ width: 390, height: 844 });
+    await embedPage.goto(`http://127.0.0.1:${external.address().port}/blogger.html`);
+    const frame = embedPage.frameLocator('iframe');
+    await frame.locator('#word-input:enabled').waitFor();
+    await frame.locator('#word-input').fill('étoile');
+    await frame.getByRole('button', { name: 'Proposer' }).click();
+    await frame.locator('#result').waitFor();
+    assert.match(await frame.locator('#result').innerText(), /trouvé/); checks++;
+    await externalContext.close();
+  } finally { await new Promise(resolve => external.close(resolve)); }
+  assert.deepEqual(issues, []);
+  const report = { checks, fixtureOnly: true, fixtureWords: count, fixtureDimensions: dimensions,
+    fixtureLoadMs: Math.round(fixtureLoadMs), browser: await browser.version(),
+    note: 'Fixtures synthétiques uniquement ; aucune mesure du modèle réel ou d’un appareil Android physique.' };
+  await writeFile('test-results/browser.json', JSON.stringify(report, null, 2) + '\n');
+  console.log(JSON.stringify(report, null, 2));
+  await context.close();
+} finally {
+  await browser.close();
+  await new Promise(resolve => server.close(resolve));
+}

@@ -1,0 +1,23 @@
+{
+  "preparedSiteUrl": "https://lafoirelunaire.github.io/Lexicalis/",
+  "publicSourceAcceptedByOwner": true,
+  "archiveBytes": 113541143,
+  "archiveSha256": "aa2957bf0b2a7dd0576585127b531f1e2dcc32679f7197a22273450e527ec1b9",
+  "dataId": "972a8d09039d8c3879abe870",
+  "packageTests": {
+    "archiveIntegrity": true,
+    "allInventoryHashesValid": true,
+    "projectSubpath": "/Lexicalis/",
+    "realDataDesktopAndMobile": true,
+    "separateOriginIframe": true,
+    "parentStylesIsolated": true,
+    "iframeGuessAccepted": true,
+    "horizontalOverflow": false,
+    "limit": "Test local du paquet et d’une iframe simulée ; GitHub Pages et le vrai thème Blogger ne sont pas encore publiés ou validés."
+  },
+  "pythonTestsPassed": 15,
+  "workflowSyntax": "Actionlint 1.7.7 passed",
+  "githubWorkflowRun": false,
+  "githubPagesLiveSiteVerified": false,
+  "bloggerPageModified": false
+}

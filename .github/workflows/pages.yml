@@ -1,0 +1,74 @@
+name: Publier Lexicalis sur GitHub Pages
+
+# Publication uniquement sur demande explicite dans l’onglet Actions.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lexicalis-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Installer Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Vérifier le moteur JavaScript
+        run: npm test
+      - name: Installer Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Installer NumPy
+        run: python -m pip install -r requirements.txt
+      - name: Restaurer les sources déjà vérifiées
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: .cache/sources
+          key: lexicalis-frwac500-lexique383-${{ hashFiles('scripts/download_data.py') }}
+      - name: Télécharger et vérifier les données officielles
+        run: python scripts/download_data.py --directory .cache/sources
+      - name: Préparer les vecteurs Float32
+        run: >-
+          python scripts/prepare_data.py
+          --model .cache/sources/frWac_no_postag_phrase_500_cbow_cut10.bin
+          --lexique .cache/sources/Lexique383.tsv
+          --output public/data
+      - name: Vérifier la préparation et le packaging
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Construire le site autonome
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+        run: python scripts/build_site.py --output dist/release --site-url "$SITE_URL"
+      - name: Préparer l’artefact Pages
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: dist/release/site
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Déployer le site
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
