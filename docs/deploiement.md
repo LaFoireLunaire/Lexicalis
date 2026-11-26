@@ -57,7 +57,11 @@ GitHub Pages ne fournit pas de réglage libre d’en-têtes HTTP comme `Content-
 3. Coller le contenu de `docs/blogger.html`. Si GitHub affiche une URL de déploiement différente, remplacer le `src` de l’iframe par cette URL HTTPS.
 4. Prévisualiser, puis publier la page lorsque son rendu vous convient.
 
-L’iframe isole les styles du jeu du thème Blogger. La hauteur est réglée dans le bloc et le contenu peut défiler verticalement. Le stockage local dépend des règles du navigateur concernant les iframes ; vérifier la reprise après actualisation sur le blog lui-même. Aucune page Blogger n’a été modifiée par cette préparation.
+Le bloc actuel affiche le jeu sur **toute la fenêtre**, avec une hauteur qui suit l’écran du téléphone et un défilement interne au jeu. Il sort l’iframe des colonnes étroites du thème Blogger et garde les styles du jeu isolés. Le stockage local dépend des règles du navigateur concernant les iframes ; vérifier la reprise après actualisation sur le blog lui-même.
+
+**Pour mettre à jour une page existante**, remplacer intégralement l’ancien bloc iframe par le contenu complet de `docs/blogger.html` : il contient le style, l’iframe et le script nécessaires. Coller ce bloc uniquement dans la page Lexicalis, en mode HTML. Le thème et les gadgets globaux du blog ne sont pas à modifier. Les autres pages gardent leur présentation habituelle.
+
+Les changements de l’interface doivent aussi être déployés sur GitHub Pages : fusionner la branche de mise à jour dans `main`, puis relancer le workflow manuel. Le bloc Blogger peut conserver la même URL du jeu. Le nouveau rendu sur votre vrai thème reste à vérifier après remplacement du bloc.
 
 ## Autre hébergement statique
 
@@ -76,6 +80,6 @@ npm run test:release
 
 Le constructeur refuse d’écraser une sortie existante afin de préserver vos fichiers. Pour une nouvelle version, utiliser par exemple `--output dist/release-v2`, puis `node scripts/test-release.mjs dist/release-v2`.
 
-Le test vérifie le ZIP et toutes les empreintes, l’extrait sous `/Lexicalis/`, joue avec les vraies données sur ordinateur et mobile émulé, puis teste une iframe depuis une autre origine avec des styles parents incompatibles. Il arrête ses serveurs temporaires et laisse les rapports dans `test-results/`.
+Le test vérifie le ZIP et toutes les empreintes, l’extrait sous `/Lexicalis/`, joue avec les vraies données sur ordinateur et mobile émulé, puis teste le bloc Blogger réellement généré depuis une autre origine, avec une colonne étroite transformée et des styles parents incompatibles. Le remplissage exact de la fenêtre est vérifié en 320 × 700, 390 × 844 et 1 440 × 900 pixels, ainsi que les éléments supprimés de l’interface. Il arrête ses serveurs temporaires et laisse les rapports dans `test-results/`.
 
 La syntaxe du workflow a été validée avec Actionlint 1.7.7, dont le binaire a été contrôlé contre les SHA-256 de sa release officielle. Les étapes Python du workflow correspondent à la chaîne de préparation déjà exécutée sur les vraies données ; le workflow lui-même n’a pas encore été lancé sur GitHub.

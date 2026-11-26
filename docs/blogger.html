@@ -1,11 +1,48 @@
-<!-- À coller en mode HTML dans une page de La Foire Lunaire.
-     URL prévue : à utiliser après un déploiement GitHub Pages réussi. -->
+<!-- Remplacer l’ancien bloc iframe de la page Blogger par ce bloc complet.
+     Le jeu occupe toute la fenêtre sur cette page uniquement. -->
+<style>
+  html.lexicalis-blogger-page,
+  html.lexicalis-blogger-page body {
+    overflow: hidden !important;
+  }
+  #lexicalis-blogger-frame {
+    position: fixed !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #101722;
+    z-index: 2147483647 !important;
+  }
+</style>
 <iframe
+  id="lexicalis-blogger-frame"
   src="https://lafoirelunaire.github.io/Lexicalis/"
   title="Lexicalis — jeu de proximité sémantique de La Foire Lunaire"
   width="100%"
-  height="1200"
-  style="display:block;width:100%;max-width:100%;height:clamp(1100px,160vh,1500px);border:0;border-radius:16px;background:#101722;"
-  loading="lazy"
+  height="900"
+  loading="eager"
   referrerpolicy="strict-origin-when-cross-origin"
 ></iframe>
+<script>
+(function () {
+  var frame = document.getElementById('lexicalis-blogger-frame');
+  if (!frame) return;
+  document.documentElement.classList.add('lexicalis-blogger-page');
+  var viewport = document.querySelector('meta[name="viewport"]');
+  if (!viewport) {
+    viewport = document.createElement('meta');
+    viewport.name = 'viewport';
+    document.head.appendChild(viewport);
+  }
+  viewport.content = 'width=device-width, initial-scale=1';
+  // Escape theme columns and transformed/clipped ancestors on this page.
+  if (frame.parentNode !== document.body) document.body.appendChild(frame);
+})();
+</script>

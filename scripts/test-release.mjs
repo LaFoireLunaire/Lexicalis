@@ -3,7 +3,7 @@ import { chromium, devices } from 'playwright';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { createReadStream } from 'node:fs';
-import { stat, mkdtemp, mkdir, copyFile, rm, writeFile } from 'node:fs/promises';
+import { stat, mkdtemp, mkdir, copyFile, rm, writeFile, readFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import os from 'node:os';
@@ -63,11 +63,15 @@ print('Archive : CRC, SHA-256 et inventaire vérifiés ; extraction sous /Lexica
   await mkdir(path.join(root, 'test-results'), { recursive: true });
   await copyFile(path.join(root, 'test-results/real-browser.json'), path.join(root, 'test-results/release-browser.json'));
 
+  const releaseInfo = JSON.parse(await readFile(path.join(release, 'release.json'), 'utf8'));
+  const embed = (await readFile(path.join(release, 'blogger.html'), 'utf8')).replace(releaseInfo.siteUrl, appUrl);
   blogServer = createServer((req, res) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.end(`<!doctype html><html lang="fr"><title>Blogger — test isolé</title><style>
-      body{margin:0;background:#ffe0e0}table{display:none}input{font-size:60px}iframe{display:block;width:100%;height:1500px;border:0}
-      </style><iframe title="Lexicalis" src="${appUrl}"></iframe></html>`);
+      body{margin:0;background:#ffe0e0}table{display:none}input{font-size:60px}
+      .blog-column{width:440px;max-width:80%;margin:100px auto;transform:translateZ(0);overflow:hidden}
+      iframe{max-width:300px!important;height:200px!important;border:8px solid red}
+      </style><header>En-tête du blog</header><main class="blog-column"><h1>Titre Blogger</h1>${embed}</main><aside>Colonne du blog</aside></html>`);
   });
   await new Promise(resolve => blogServer.listen(0, '127.0.0.1', resolve));
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', headless: true });
@@ -84,12 +88,28 @@ print('Archive : CRC, SHA-256 et inventaire vérifiés ; extraction sous /Lexica
   await frame.locator('#guess-button').click();
   await frame.locator('#guesses tr').waitFor();
   assert.equal(await frame.locator('#attempts').innerText(), '1');
+  assert.equal(await page.locator('#lexicalis-blogger-frame').evaluate(node => node.parentNode === document.body), true);
+  for (const viewport of [{ width: 320, height: 700 }, { width: 390, height: 844 }, { width: 1440, height: 900 }]) {
+    await page.setViewportSize(viewport);
+    const bounds = await page.locator('#lexicalis-blogger-frame').boundingBox();
+    assert.ok(Math.abs(bounds.x) < 1 && Math.abs(bounds.y) < 1);
+    assert.ok(Math.abs(bounds.width - viewport.width) < 1 && Math.abs(bounds.height - viewport.height) < 1, JSON.stringify({ bounds, viewport }));
+    assert.ok(await frame.locator('html').evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    assert.equal(await frame.locator('.masthead h1').innerText(), 'Lexicalis.');
+    assert.equal(await frame.locator('.brand, .introduction, .unlimited, .panel-foot, .privacy').count(), 0);
+    assert.equal(await frame.locator('.help-card h2').innerText(), 'Un petit coup de pouce ?');
+    assert.equal(await frame.locator('.help-card p').innerText(), 'Un indice dévoile un mot voisin.');
+    const gameWidth = await frame.locator('.lexicalis').evaluate(node => node.getBoundingClientRect().width);
+    assert.ok(Math.abs(gameWidth - viewport.width) < 1);
+  }
   assert.deepEqual(errors, []);
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: path.join(root, 'test-results/release-blogger.png'), fullPage: true });
   const report = { archiveIntegrity: true, allInventoryHashesValid: true, projectSubpath: '/Lexicalis/',
     realDataDesktopAndMobile: true, separateOriginIframe: true, parentStylesIsolated: true,
-    iframeGuessAccepted: true, horizontalOverflow: false,
-    limit: 'Test local du paquet et d’une iframe simulée ; GitHub Pages et le vrai thème Blogger ne sont pas encore publiés ou validés.' };
+    iframeGuessAccepted: true, horizontalOverflow: false, fullViewportIframe: true,
+    themeColumnEscaped: true, compactHeaderAndRequestedRemovals: true,
+    limit: 'Test local du paquet et d’une iframe simulée ; le rendu du nouveau bloc sur le vrai thème Blogger reste à vérifier après remplacement.' };
   await writeFile(path.join(root, 'test-results/release.json'), JSON.stringify(report, null, 2) + '\n');
   console.log(JSON.stringify(report, null, 2));
   await context.close();

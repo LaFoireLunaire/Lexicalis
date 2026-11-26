@@ -50,43 +50,16 @@ button {
 button,select {
   color:inherit
 }
-.lexicalis {
-  width:min(1120px,100% - 80px);
-  margin:auto
-}
+
 .masthead {
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:30px 0;
+  padding:18px 0;
   border-bottom:1px solid var(--line);
   gap:16px
 }
-.brand {
-  display:flex;
-  align-items:center;
-  gap:13px;
-  text-decoration:none;
-  color:var(--gold)
-}
-.brand>span {
-  font-size:12px;
-  letter-spacing:2px;
-  font-weight:650
-}
-.brand small {
-  display:block;
-  color:var(--muted);
-  letter-spacing:.5px;
-  font-size:10px;
-  font-weight:400;
-  margin-top:3px
-}
-.moon {
-  width:38px;
-  height:38px;
-  flex-shrink:0
-}
+
 .text-button {
   background:none;
   font-size:12px;
@@ -108,13 +81,7 @@ button,select {
   font-size:11px;
   line-height:17px
 }
-.introduction {
-  padding:55px 0 42px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:24px
-}
+
 .eyebrow {
   font-size:10px;
   font-weight:600;
@@ -124,72 +91,11 @@ button,select {
 .eyebrow>span {
   margin-right:9px
 }
-h1 {
-  font:76px/1.1 Georgia,"Times New Roman",serif;
-  letter-spacing:-3px;
-  margin:13px 0 18px
-}
-h1>span {
-  color:var(--gold)
-}
-.subtitle {
-  color:var(--muted);
-  font-size:15px;
-  line-height:1.8
-}
-.orbit-art {
-  position:relative;
-  width:280px;
-  height:190px;
-  flex-shrink:0;
-  color:#c2b99d
-}
-.orbit-art i {
-  position:absolute;
-  border:1px solid #8f9b9d28;
-  border-radius:50%;
-  inset:16px 0;
-  transform:rotate(-25deg)
-}
-.orbit-art i:nth-child(2) {
-  inset:30px 15px;
-  transform:rotate(30deg)
-}
-.orbit-art i:nth-child(3) {
-  inset:47px 50px;
-  transform:rotate(75deg)
-}
-.orbit-art b,.orbit-art em,.orbit-art span,.orbit-art strong {
-  position:absolute;
-  font:italic 14px Georgia,serif;
-  background:var(--bg);
-  padding:0 8px
-}
-.orbit-art b {
-  left:110px;
-  top:70px;
-  font-size:32px;
-  color:var(--gold);
-  font-weight:400
-}
-.orbit-art em {
-  right:6px;
-  top:50px;
-  color:#8d9cae
-}
-.orbit-art span {
-  left:14px;
-  bottom:33px
-}
-.orbit-art strong {
-  left:55px;
-  top:30px;
-  color:var(--gold)
-}
+
 .game-layout {
   display:grid;
   grid-template-columns:minmax(0,1fr) 285px;
-  align-items:start;
+  align-items:stretch;
   gap:25px
 }
 .game-panel {
@@ -197,7 +103,10 @@ h1>span {
   border:1px solid var(--line);
   border-radius:var(--radius);
   overflow:hidden;
-  padding:24px 28px 0;
+  padding:24px 28px 20px;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
   box-shadow:0 10px 50px #00000012
 }
 .panel-top {
@@ -244,11 +153,7 @@ h1>span {
   align-self:center;
   margin:0 5px
 }
-.unlimited {
-  font-size:10px;
-  color:var(--muted);
-  margin-left:auto
-}
+
 #guess-form label {
   font-size:12px;
   display:block;
@@ -485,17 +390,7 @@ td:last-child {
   color:var(--muted);
   line-height:1.8
 }
-.panel-foot {
-  border-top:1px solid var(--line);
-  color:var(--muted);
-  font-size:10px;
-  text-align:center;
-  padding:16px 0
-}
-.panel-foot span {
-  color:var(--gold);
-  margin-right:8px
-}
+
 .sidebar {
   display:grid;
   gap:18px
@@ -612,16 +507,7 @@ td:last-child {
   text-decoration:underline;
   text-underline-offset:3px
 }
-.privacy {
-  font-size:10px;
-  text-align:center;
-  color:var(--muted);
-  line-height:1.8
-}
-.privacy>span {
-  color:var(--gold);
-  margin-right:4px
-}
+
 .result {
   border:1px solid #e6bf8260;
   background:#e6bf8210;
@@ -686,7 +572,7 @@ td:last-child {
 }
 footer {
   border-top:1px solid var(--line);
-  margin-top:46px;
+  margin-top:24px;
   padding:24px 0 30px;
   color:var(--muted)
 }
@@ -767,13 +653,7 @@ dialog::backdrop {
   display:none!important
 }
 @media(min-width:1400px) {
-  .lexicalis {
-    width:min(1160px,100% - 100px)
-  }
-  .introduction {
-    padding-top:65px;
-    padding-bottom:50px
-  }
+
   .game-layout {
     grid-template-columns:minmax(0,1fr) 305px;
     gap:30px
@@ -783,9 +663,7 @@ dialog::backdrop {
   }
 }
 @media(max-width:850px) {
-  .lexicalis {
-    width:calc(100% - 40px)
-  }
+
   .game-layout {
     grid-template-columns:minmax(0,1fr) 240px;
     gap:16px
@@ -796,52 +674,23 @@ dialog::backdrop {
   .compass-card,.help-card {
     padding:20px 16px
   }
-  .orbit-art {
-    width:220px
-  }
-  .unlimited {
-    display:none
-  }
+
 }
 @media(max-width:680px) {
   .masthead {
     padding:21px 0
   }
-  .brand>span {
-    font-size:10px;
-    letter-spacing:1.5px
-  }
-  .brand small {
-    font-size:8px
-  }
-  .moon {
-    width:30px;
-    height:30px
-  }
-  .brand {
-    gap:8px
-  }
+
   #rules-button {
     font-size:10px;
     gap:5px
   }
-  .introduction {
-    padding:36px 0 29px
-  }
+
   .eyebrow {
     font-size:8px;
     letter-spacing:1.4px
   }
-  h1 {
-    font-size:62px;
-    margin:10px 0 14px
-  }
-  .subtitle {
-    font-size:13px
-  }
-  .orbit-art {
-    display:none
-  }
+
   .game-layout {
     grid-template-columns:minmax(0,1fr)
   }
@@ -923,10 +772,7 @@ dialog::backdrop {
   .help-card .secondary span {
     display:none
   }
-  .privacy {
-    grid-column:1/-1;
-    margin-top:4px
-  }
+
   .best>div {
     flex-wrap:wrap;
     gap:3px
@@ -954,9 +800,7 @@ dialog::backdrop {
   }
 }
 @media(max-width:360px) {
-  .lexicalis {
-    width:calc(100% - 24px)
-  }
+
   .primary span {
     display:none
   }
@@ -982,15 +826,11 @@ dialog::backdrop {
   .sidebar {
     grid-template-columns:1fr
   }
-  .privacy {
-    grid-column:auto
-  }
+
   .masthead {
     gap:8px
   }
-  .brand small {
-    letter-spacing:0
-  }
+
   #rules-button {
     font-size:9px
   }
@@ -1008,9 +848,7 @@ dialog::backdrop {
     }
   }
 }
-.orbit-art {
-  overflow:clip
-}
+
 .primary .arrow-icon {
   width:14px;
   height:14px;
@@ -1020,5 +858,51 @@ dialog::backdrop {
 @media(max-width:360px) {
   .primary .arrow-icon {
     display:none
+  }
+}
+
+/* The game uses all the space offered by its standalone page or Blogger frame. */
+.lexicalis {
+  width:100%;
+  min-height:100vh;
+  min-height:100dvh;
+  margin:0;
+  padding:0 clamp(12px,3vw,48px);
+  display:flex;
+  flex-direction:column;
+}
+.game-title {
+  margin:0;
+  font:40px/1.1 Georgia,"Times New Roman",serif;
+  letter-spacing:-1.5px;
+}
+.game-title>span {
+  color:var(--gold);
+}
+main {
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  min-width:0;
+  padding-top:24px;
+}
+.game-layout {
+  flex:1;
+}
+.game-panel {
+  padding-bottom:20px;
+}
+.table-wrap {
+  flex:1;
+}
+@media(max-width:680px) {
+  .masthead {
+    padding:16px 0;
+  }
+  .game-title {
+    font-size:32px;
+  }
+  main {
+    padding-top:16px;
   }
 }
