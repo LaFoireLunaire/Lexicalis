@@ -14,27 +14,17 @@
 <body>
 <div class="lexicalis">
   <header class="masthead">
-    <a class="brand" href="https://lafoirelunaire.blogspot.com/" target="_blank" rel="noopener">
-      <svg class="moon" viewBox="0 0 40 40" aria-hidden="true"><path d="M29 31A16 16 0 0 1 12 5a17 17 0 1 0 17 26Z" fill="currentColor"/><path d="m29 8 1.2 3.8L34 13l-3.8 1.2L29 18l-1.2-3.8L24 13l3.8-1.2Z" fill="currentColor"/></svg>
-      <span>LA FOIRE LUNAIRE<small>Un peu plus près des mots</small></span>
-    </a>
+    <h1 class="game-title" id="title">Lexicalis<span>.</span></h1>
     <button class="text-button" id="rules-button" type="button"><span aria-hidden="true">?</span> Comment jouer</button>
   </header>
 
   <main>
-    <section class="introduction" aria-labelledby="title">
-      <div><p class="eyebrow"><span aria-hidden="true">✦</span> LE RENDEZ-VOUS DES ESPRITS CURIEUX</p>
-      <h1 id="title">Lexicalis<span>.</span></h1>
-      <p class="subtitle">Un mot se cache. Les vôtres vous en rapprochent.<br>Suivez la chaleur, trouvez le lien.</p></div>
-      <div class="orbit-art" aria-hidden="true"><i></i><i></i><i></i><span>lune</span><b>mot</b><em>idée</em><strong>✦</strong></div>
-    </section>
-
     <div class="game-layout">
       <section class="game-panel" aria-label="Votre partie">
         <div class="panel-top"><div class="live-label"><span></span> PARTIE LIBRE</div>
           <button type="button" id="new-button" class="text-button" disabled><span aria-hidden="true">↻</span> Nouvelle partie</button>
         </div>
-        <div class="counters"><p><strong id="attempts">0</strong> <span id="attempt-label">essai</span></p><span class="counter-divider"></span><p><strong id="hint-count">0</strong> <span id="hint-label">indice</span></p><span class="unlimited">Sans limite. Sans pression.</span></div>
+        <div class="counters"><p><strong id="attempts">0</strong> <span id="attempt-label">essai</span></p><span class="counter-divider"></span><p><strong id="hint-count">0</strong> <span id="hint-label">indice</span></p></div>
 
         <div id="result" class="result" role="status" hidden></div>
         <form id="guess-form" autocomplete="off">
@@ -49,13 +39,11 @@
           <table id="guesses-table"><caption class="sr-only">Vos propositions et leurs proximités avec le mot mystère</caption><thead><tr><th scope="col">N°</th><th scope="col">Mot</th><th scope="col" class="numeric">Température</th><th scope="col">Progression</th></tr></thead><tbody id="guesses"></tbody></table>
           <div class="empty" id="empty"><div class="empty-symbol" aria-hidden="true">✧</div><h3>Tout commence par un mot.</h3><p>Un objet, une émotion, une idée…<br>Laissez votre intuition ouvrir la voie.</p></div>
         </div>
-        <div class="panel-foot"><span aria-hidden="true">✧</span> Chaque détour peut être une découverte.</div>
       </section>
 
       <aside class="sidebar" aria-label="Aide et indices">
         <section class="compass-card"><p class="eyebrow">VOTRE BOUSSOLE</p><h2>Chaud devant.</h2><p>La température mesure le lien de sens avec le mot mystère.</p><div class="heat-scale" aria-hidden="true"></div><div class="scale-labels"><span>−100° · Lointain</span><span>100° · Trouvé</span></div><p class="rank-explanation">Dans les <strong>1 000 mots les plus proches</strong>, une barre révèle votre progression.</p><div id="best" class="best" hidden><span>VOTRE MOT LE PLUS CHAUD</span><div><strong id="best-word"></strong><b id="best-score"></b></div></div></section>
-        <section class="help-card"><div class="help-symbol" aria-hidden="true">✺</div><h2>Un petit coup de lune ?</h2><p>Un indice dévoile un mot voisin.<br>Jamais la réponse.</p><button id="hint-button" class="secondary" type="button" disabled>Obtenir un indice <span aria-hidden="true">✦</span></button><button id="give-up-button" class="quiet" type="button" disabled>Abandonner cette partie</button></section>
-        <p class="privacy"><span aria-hidden="true">◈</span> Votre partie reste dans ce navigateur.<br>Aucun compte. Juste vous et les mots.</p>
+        <section class="help-card"><div class="help-symbol" aria-hidden="true">✺</div><h2>Un petit coup de pouce ?</h2><p>Un indice dévoile un mot voisin.</p><button id="hint-button" class="secondary" type="button" disabled>Obtenir un indice <span aria-hidden="true">✦</span></button><button id="give-up-button" class="quiet" type="button" disabled>Abandonner cette partie</button></section>
       </aside>
     </div>
     <section id="neighbors-section" class="neighbors" hidden aria-labelledby="neighbors-title"><h2 id="neighbors-title">Dans l’orbite du mot mystère</h2><p>Les 1 000 mots les plus proches, classés selon leur proximité réelle.</p><details><summary>Explorer les mots voisins</summary><ol id="neighbors"></ol></details></section>
