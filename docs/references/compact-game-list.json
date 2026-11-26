@@ -1,0 +1,74 @@
+{
+  "dataId": "972a8d09039d8c3879abe870",
+  "browserChecksPassed": 34,
+  "rowVerticalPaddingPx": 8,
+  "lastProposalUsesSameRowRenderer": true,
+  "lastProposalCellWidthsAndHeightMatchList": true,
+  "removedSelectors": [
+    "#feedback",
+    "#sort",
+    ".list-toolbar",
+    ".compass-card"
+  ],
+  "fixedTemperatureDescendingOrder": true,
+  "legacyChronologicalPreferenceIgnored": true,
+  "invalidAndDuplicateWordsUseNativeValidation": true,
+  "victoryShowsOnlyAnswerAndAttemptHintCounts": true,
+  "scrollPreservationAndFillAnimationsVerified": true,
+  "realDataScenarios": [
+    {
+      "mode": "desktop",
+      "loadMs": 1034,
+      "lastGuessRoundTripMs": 67,
+      "mainThreadIntervalMaxMs": 90,
+      "mainThreadTicks": 113,
+      "displayedScores": [
+        "3univers6,25 °C—",
+        "4jeu2,98 °C—",
+        "1ordinateur-0,84 °C—",
+        "2avatar-1,16 °C—"
+      ],
+      "lastGuessDetailsMatchTable": true,
+      "restored": true,
+      "won": true,
+      "neighbors": 1000,
+      "horizontalOverflow": false,
+      "cpuSlowdown": 1
+    },
+    {
+      "mode": "mobile-emulated",
+      "loadMs": 1784,
+      "lastGuessRoundTripMs": 64,
+      "mainThreadIntervalMaxMs": 241,
+      "mainThreadTicks": 182,
+      "displayedScores": [
+        "3univers6,25 °C—",
+        "4jeu2,98 °C—",
+        "1ordinateur-0,84 °C—",
+        "2avatar-1,16 °C—"
+      ],
+      "lastGuessDetailsMatchTable": true,
+      "restored": true,
+      "won": true,
+      "neighbors": 1000,
+      "horizontalOverflow": false,
+      "cpuSlowdown": 4
+    }
+  ],
+  "iframeChecks": {
+    "archiveIntegrity": true,
+    "allInventoryHashesValid": true,
+    "projectSubpath": "/Lexicalis/",
+    "realDataDesktopAndMobile": true,
+    "separateOriginIframe": true,
+    "parentStylesIsolated": true,
+    "iframeGuessAccepted": true,
+    "horizontalOverflow": false,
+    "fullViewportIframe": true,
+    "themeColumnEscaped": true,
+    "compactHeaderAndRequestedRemovals": true,
+    "limit": "Test local du paquet et d’une iframe simulée ; le rendu du nouveau bloc sur le vrai thème Blogger reste à vérifier après remplacement."
+  },
+  "archiveSha256": "dfcced7da8adf23107e0ffa1724f91b66e1b4c9ce173fb2f08bb0bebcfb2b5ae",
+  "liveBlogUpdatedByAgent": false
+}

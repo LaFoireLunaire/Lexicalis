@@ -14,11 +14,38 @@ try { saved = JSON.parse(localStorage.getItem(storageKey) || 'null'); }
 catch (error) { saveWarning = error.name === 'SyntaxError'
   ? 'La sauvegarde n’a pas pu être lue : une nouvelle partie commence.'
   : 'La sauvegarde locale est indisponible dans ce navigateur.'; }
-if (saved?.preferences?.sort === 'chronological') $('sort').value = 'chronological';
+function announce(text = '') {
+  $('announcer').textContent = text;
+}
 
-function feedback(text, kind = '') {
-  $('feedback').textContent = text;
-  $('feedback').className = `feedback ${kind}`;
+function clearInputError() {
+  $('word-input').setCustomValidity('');
+  $('word-input').removeAttribute('aria-invalid');
+}
+
+function showInputError(message) {
+  const input = $('word-input');
+  input.setCustomValidity(message);
+  input.setAttribute('aria-invalid', 'true');
+  announce(message);
+  input.reportValidity();
+}
+
+function showLoading(message) {
+  $('word-input').placeholder = message;
+  announce(message);
+}
+
+function showLoadError(message) {
+  $('word-input').placeholder = 'Chargement indisponible';
+  $('retry-button').title = message;
+  $('retry-button').hidden = false;
+  announce(message);
+}
+
+function showSaveWarning() {
+  $('word-input').title = saveWarning;
+  announce(saveWarning);
 }
 
 function controls() {
@@ -28,6 +55,7 @@ function controls() {
   $('new-button').disabled = !ready || busy;
   $('hint-button').disabled = !playing || busy;
   $('give-up-button').disabled = !playing || busy;
+  $('guess-form').setAttribute('aria-busy', String(busy));
 }
 
 function call(action, payload = {}) {
@@ -41,9 +69,7 @@ function call(action, payload = {}) {
 function persist() {
   if (!snapshot) return;
   try {
-    localStorage.setItem(storageKey, JSON.stringify({
-      game: snapshot, preferences: { sort: $('sort').value },
-    }));
+    localStorage.setItem(storageKey, JSON.stringify({ game: snapshot }));
   } catch { saveWarning = 'La sauvegarde locale est indisponible. Gardez cette page ouverte pour conserver la partie.'; }
 }
 
@@ -67,7 +93,7 @@ function element(tag, text, className) {
   return node;
 }
 
-function progression(entry, animate = false, fullLabel = false) {
+function progression(entry, animate = false) {
   const wrapper = element('div', undefined, 'progression');
   const track = element('span', undefined, 'progress-track');
   track.setAttribute('role', 'meter');
@@ -81,60 +107,59 @@ function progression(entry, animate = false, fullLabel = false) {
   fill.style.setProperty('--progress', entry.progression / 1000);
   if (animate) fill.classList.add('animate-progress');
   track.append(fill);
-  wrapper.append(track, element('span', fullLabel ? `${entry.progression} / 1 000` : entry.progression, 'progress-count'));
+  wrapper.append(track, element('span', entry.progression, 'progress-count'));
   return wrapper;
+}
+
+function guessRow(entry, { latest = false, animate = false, summary = false } = {}) {
+  const row = element('tr');
+  if (latest) row.className = 'guess-latest';
+  row.style.setProperty('--temperature', heat(entry.temperature));
+  const number = element('td', entry.kind === 'hint' ? '✦' : entry.attempt);
+  if (entry.kind === 'hint') number.title = 'Indice — ne compte pas comme un essai';
+  const word = element('td', entry.word);
+  if (latest) {
+    const dot = element('span', undefined, 'latest-dot');
+    dot.setAttribute('aria-label', 'Dernier mot');
+    word.append(dot);
+  }
+  if (entry.kind === 'hint') word.append(element('span', ' · indice', 'hint-tag'));
+  const score = element('td', temperature(entry.temperature), 'numeric temperature');
+  const rank = element('td');
+  if (entry.progression) rank.append(progression(entry, animate));
+  else {
+    rank.textContent = '—';
+    rank.setAttribute('aria-label', 'Hors des 1 000 mots les plus proches');
+  }
+  if (summary) {
+    number.id = 'last-guess-number';
+    word.id = 'last-guess-word';
+    score.id = 'last-guess-temperature';
+    rank.id = 'last-guess-progression';
+  }
+  row.append(number, word, score, rank);
+  return row;
 }
 
 function renderLastGuess(animatedSequence = null) {
   const entry = current.entries.at(-1);
   $('last-guess').hidden = !entry;
-  if (!entry) return;
-  $('last-guess-label').textContent = entry.kind === 'hint' ? 'Dernier indice' : 'Dernière proposition';
-  $('last-guess-number').textContent = entry.kind === 'hint' ? '✦' : `#${entry.attempt}`;
-  $('last-guess-word').textContent = entry.word;
-  $('last-guess-temperature').textContent = temperature(entry.temperature);
-  $('last-guess').style.setProperty('--temperature', heat(entry.temperature));
-  $('last-guess-progression').replaceChildren(entry.progression
-    ? progression(entry, entry.sequence === animatedSequence, true)
-    : element('span', 'Hors du top 1 000', 'outside-ranking'));
+  $('last-guess-row').replaceChildren(...(entry ? [guessRow(entry, {
+    latest: true, animate: entry.sequence === animatedSequence, summary: true,
+  })] : []));
 }
 
 function renderTable({ animatedSequence = null, resetScroll = false } = {}) {
   const wrap = document.querySelector('.table-wrap');
   const scrollTop = resetScroll ? 0 : wrap.scrollTop;
   const entries = [...current.entries];
-  const chronological = $('sort').value === 'chronological';
-  entries.sort(chronological ? (a, b) => b.sequence - a.sequence :
-    (a, b) => b.temperature - a.temperature || a.sequence - b.sequence);
+  entries.sort((a, b) => b.temperature - a.temperature || a.sequence - b.sequence);
   const fragment = document.createDocumentFragment();
-  for (const entry of entries) {
-    const row = element('tr');
-    const latest = entry.sequence === current.entries.length - 1;
-    if (latest) row.className = 'guess-latest';
-    row.style.setProperty('--temperature', heat(entry.temperature));
-    const number = element('td', entry.kind === 'hint' ? '✦' : entry.attempt);
-    if (entry.kind === 'hint') number.title = 'Indice — ne compte pas comme un essai';
-    row.append(number);
-    const word = element('td', entry.word);
-    if (latest) {
-      const dot = element('span', undefined, 'latest-dot');
-      dot.setAttribute('aria-label', 'Dernier mot');
-      word.append(dot);
-    }
-    if (entry.kind === 'hint') word.append(element('span', ' · indice', 'hint-tag'));
-    row.append(word, element('td', temperature(entry.temperature), 'numeric temperature'));
-    const rank = element('td');
-    if (entry.progression) {
-      rank.append(progression(entry, entry.sequence === animatedSequence));
-    } else {
-      rank.textContent = '—';
-      rank.setAttribute('aria-label', 'Hors des 1 000 mots les plus proches');
-    }
-    row.append(rank);
-    fragment.append(row);
-  }
+  for (const entry of entries) fragment.append(guessRow(entry, {
+    latest: entry.sequence === current.entries.length - 1,
+    animate: entry.sequence === animatedSequence,
+  }));
   $('guesses').replaceChildren(fragment);
-  $('entry-count').textContent = current.entries.length;
   $('empty').hidden = entries.length > 0;
   // Keep the player's scroll position even when a new row sorts above it.
   wrap.scrollTop = scrollTop;
@@ -148,21 +173,14 @@ function render({ animateLatest = false, resetScroll = false } = {}) {
   const animatedSequence = animateLatest ? current.entries.at(-1)?.sequence : null;
   renderTable({ animatedSequence, resetScroll });
   renderLastGuess(animatedSequence);
-  const best = current.entries.reduce((found, entry) => !found || entry.temperature > found.temperature ? entry : found, null);
-  $('best').hidden = !best;
-  if (best) {
-    $('best-word').textContent = best.word;
-    $('best-score').textContent = temperature(best.temperature);
-    $('best').style.setProperty('--temperature', heat(best.temperature));
-  }
   const finished = current.outcome !== 'playing';
   $('result').hidden = !finished;
   $('neighbors-section').hidden = !finished;
   if (finished) {
-    $('result').replaceChildren(
-      element('span', current.outcome === 'won' ? 'Vous avez trouvé votre étoile !' : 'Le mot mystère était…'),
-      element('strong', current.answer),
-      element('p', `${current.attempts} essai${current.attempts > 1 ? 's' : ''} et ${current.hints} indice${current.hints > 1 ? 's' : ''}. Une nouvelle exploration vous attend.`));
+    const result = [element('strong', current.answer),
+      element('p', `${current.attempts} essai${current.attempts > 1 ? 's' : ''} et ${current.hints} indice${current.hints > 1 ? 's' : ''}.`)];
+    if (current.outcome === 'given-up') result.unshift(element('span', 'Le mot mystère était…'));
+    $('result').replaceChildren(...result);
     const fragment = document.createDocumentFragment();
     for (const neighbor of current.neighbors) {
       const item = element('li');
@@ -178,6 +196,7 @@ function render({ animateLatest = false, resetScroll = false } = {}) {
 
 async function action(name, payload) {
   if (busy || !ready) return;
+  clearInputError();
   busy = true;
   controls();
   try {
@@ -186,13 +205,11 @@ async function action(name, payload) {
     snapshot = result.snapshot;
     persist();
     render({ animateLatest: name === 'guess' || name === 'hint', resetScroll: name === 'new' });
-    feedback(saveWarning || (name === 'hint' ? 'Un nouveau mot voisin a rejoint vos explorations.' :
-      name === 'new' ? 'Une nouvelle partie commence. À vous de jouer.' :
-      current.outcome === 'won' ? 'Bravo, vous avez trouvé le mot mystère !' :
-      current.outcome === 'given-up' ? 'Vous pouvez maintenant explorer les mots voisins.' : ''), 'success');
+    showSaveWarning();
     if (name === 'new' || (name === 'guess' && $('word-input').value === payload.word)) $('word-input').value = '';
   } catch (error) {
-    feedback(error.message, 'error');
+    if (ready && current?.outcome === 'playing') showInputError(error.message);
+    else announce(error.message);
   } finally {
     busy = false;
     controls();
@@ -224,11 +241,12 @@ async function initialize() {
   busy = true;
   controls();
   $('retry-button').hidden = true;
-  feedback('Chargement du dictionnaire…');
+  clearInputError();
+  showLoading('Chargement du dictionnaire…');
   worker?.terminate();
   worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
   worker.onmessage = ({ data }) => {
-    if (data.progress) { feedback(data.progress); return; }
+    if (data.progress) { showLoading(data.progress); return; }
     const request = pending.get(data.id);
     if (!request) return;
     pending.delete(data.id);
@@ -242,8 +260,7 @@ async function initialize() {
     ready = false;
     busy = false;
     controls();
-    feedback(error.message, 'error');
-    $('retry-button').hidden = false;
+    showLoadError(error.message);
   };
   try {
     const manifestUrl = new URL(globalThis.LEXICALIS_CONFIG?.manifestUrl || '../data/manifest.json', import.meta.url).href;
@@ -254,13 +271,12 @@ async function initialize() {
     ready = true;
     persist();
     render();
-    feedback(saveWarning || (result.reset ? 'Le dictionnaire a changé ou la sauvegarde était incompatible : une nouvelle partie commence.' :
-      result.restored ? 'Votre exploration reprend là où vous l’aviez laissée.' : 'Le dictionnaire est prêt. À vous de jouer.'));
+    $('word-input').placeholder = 'Écrivez un mot…';
+    showSaveWarning();
     // Avoid opening the mobile keyboard automatically on initial page load.
     if (matchMedia('(pointer: fine)').matches) $('word-input').focus({ preventScroll: true });
   } catch (error) {
-    feedback(error.message, 'error');
-    $('retry-button').hidden = false;
+    showLoadError(error.message);
   } finally {
     busy = false;
     controls();
@@ -271,7 +287,7 @@ $('guess-form').addEventListener('submit', event => {
   event.preventDefault();
   void action('guess', { word: $('word-input').value });
 });
-$('sort').addEventListener('change', () => { if (current) { renderTable({ resetScroll: true }); persist(); } });
+$('word-input').addEventListener('input', clearInputError);
 $('hint-button').addEventListener('click', () => void action('hint'));
 $('give-up-button').addEventListener('click', () => confirmAction('give-up'));
 $('new-button').addEventListener('click', () => confirmAction('new'));

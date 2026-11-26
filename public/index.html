@@ -29,30 +29,26 @@
         <div id="result" class="result" role="status" hidden></div>
         <form id="guess-form" autocomplete="off">
           <label for="word-input">À quel mot pensez-vous ?</label>
-          <div class="input-row"><input id="word-input" name="word" type="text" placeholder="Écrivez un mot…" autocapitalize="none" spellcheck="false" maxlength="100" disabled aria-describedby="feedback"><button id="guess-button" class="primary" type="submit" disabled>Proposer <svg class="arrow-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M4 3h9v9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button></div>
+          <div class="input-row"><input id="word-input" name="word" type="text" placeholder="Écrivez un mot…" autocapitalize="none" spellcheck="false" maxlength="100" disabled><button id="guess-button" class="primary" type="submit" disabled>Proposer <svg class="arrow-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M4 3h9v9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button></div>
         </form>
-        <p id="feedback" class="feedback" role="status" aria-live="polite">Chargement du dictionnaire…</p>
+        <span id="announcer" class="sr-only" role="status" aria-live="polite"></span>
         <button id="retry-button" class="secondary" type="button" hidden>Réessayer le chargement</button>
 
-        <section id="last-guess" class="last-guess" role="status" aria-labelledby="last-guess-label" aria-atomic="true" hidden>
-          <p id="last-guess-label" class="last-guess-label">Dernière proposition</p>
-          <div class="last-guess-details">
-            <span id="last-guess-number" class="last-guess-number"></span>
-            <strong id="last-guess-word"></strong>
-            <span id="last-guess-temperature" class="temperature"></span>
-            <div id="last-guess-progression"></div>
-          </div>
-        </section>
+        <div id="last-guess" class="last-guess" role="status" aria-label="Dernière proposition" aria-atomic="true" hidden>
+          <table aria-label="Dernière proposition">
+            <caption class="sr-only">Dernière proposition</caption>
+            <colgroup><col class="col-attempt"><col class="col-word"><col class="col-temperature"><col class="col-progression"></colgroup>
+            <tbody id="last-guess-row"></tbody>
+          </table>
+        </div>
 
-        <div class="list-toolbar"><h2>Vos explorations <span id="entry-count">0</span></h2><label for="sort">Trier par <select id="sort"><option value="temperature">Température</option><option value="chronological">Chronologie</option></select></label></div>
         <div class="table-wrap">
-          <table id="guesses-table"><caption class="sr-only">Vos propositions et leurs proximités avec le mot mystère</caption><thead><tr><th scope="col">N°</th><th scope="col">Mot</th><th scope="col" class="numeric" aria-label="Température"><span class="column-label-full">Température</span><span class="column-label-compact" aria-hidden="true">Temp.</span></th><th scope="col" aria-label="Progression"><span class="column-label-full">Progression</span><span class="column-label-compact" aria-hidden="true">Progr.</span></th></tr></thead><tbody id="guesses"></tbody></table>
+          <table id="guesses-table"><caption class="sr-only">Vos propositions et leurs proximités avec le mot mystère</caption><colgroup><col class="col-attempt"><col class="col-word"><col class="col-temperature"><col class="col-progression"></colgroup><thead><tr><th scope="col">N°</th><th scope="col">Mot</th><th scope="col" class="numeric" aria-label="Température"><span class="column-label-full">Température</span><span class="column-label-compact" aria-hidden="true">Temp.</span></th><th scope="col" aria-label="Progression"><span class="column-label-full">Progression</span><span class="column-label-compact" aria-hidden="true">Progr.</span></th></tr></thead><tbody id="guesses"></tbody></table>
           <div class="empty" id="empty"><div class="empty-symbol" aria-hidden="true">✧</div><h3>Tout commence par un mot.</h3><p>Un objet, une émotion, une idée…<br>Laissez votre intuition ouvrir la voie.</p></div>
         </div>
       </section>
 
       <aside class="sidebar" aria-label="Aide et indices">
-        <section class="compass-card"><p class="eyebrow">VOTRE BOUSSOLE</p><h2>Chaud devant.</h2><p>La température mesure le lien de sens avec le mot mystère.</p><div class="heat-scale" aria-hidden="true"></div><div class="scale-labels"><span>−100° · Lointain</span><span>100° · Trouvé</span></div><p class="rank-explanation">Dans les <strong>1 000 mots les plus proches</strong>, une barre révèle votre progression.</p><div id="best" class="best" hidden><span>VOTRE MOT LE PLUS CHAUD</span><div><strong id="best-word"></strong><b id="best-score"></b></div></div></section>
         <section class="help-card"><div class="help-symbol" aria-hidden="true">✺</div><h2>Un petit coup de pouce ?</h2><p>Un indice dévoile un mot voisin.</p><button id="hint-button" class="secondary" type="button" disabled>Obtenir un indice <span aria-hidden="true">✦</span></button><button id="give-up-button" class="quiet" type="button" disabled>Abandonner cette partie</button></section>
       </aside>
     </div>

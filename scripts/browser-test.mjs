@@ -66,7 +66,7 @@ try {
   page.on('pageerror', error => issues.push(error.message));
   await page.goto(url);
   await page.getByRole('button', { name: 'Réessayer le chargement' }).waitFor();
-  assert.match(await page.locator('#feedback').innerText(), /dictionnaire.*disponible/);
+  assert.match(await page.locator('#retry-button').getAttribute('title'), /dictionnaire.*disponible/);
   assert.ok(await page.locator('#word-input').isDisabled()); checks++;
   await page.getByRole('button', { name: 'Comment jouer' }).click();
   assert.ok(await page.locator('#rules-dialog').isVisible());
@@ -82,23 +82,38 @@ try {
     await page.locator('#guess-button:enabled').waitFor();
   }
   await guess('inconnu');
-  assert.match(await page.locator('#feedback').innerText(), /dictionnaire/);
+  assert.match(await page.locator('#word-input').evaluate(node => node.validationMessage), /dictionnaire/);
   assert.equal(await page.locator('#attempts').innerText(), '0'); checks++;
   await guess('  LUNE  ');
   await page.locator('#guesses tr').waitFor();
+  assert.equal(await page.locator('#feedback, #sort, .list-toolbar, .compass-card').count(), 0);
+  assert.equal(await page.getByText('Vos explorations', { exact: true }).count(), 0); checks++;
+  const matchingRows = await page.evaluate(() => {
+    const last = document.querySelector('#last-guess-row tr');
+    const listed = document.querySelector('#guesses .guess-latest');
+    return { last: [...last.cells].map(cell => cell.textContent), listed: [...listed.cells].map(cell => cell.textContent),
+      widths: [...last.cells].map((cell, i) => Math.abs(cell.getBoundingClientRect().width - listed.cells[i].getBoundingClientRect().width)),
+      sameHeight: Math.abs(last.getBoundingClientRect().height - listed.getBoundingClientRect().height) < 1,
+      height: listed.getBoundingClientRect().height,
+      padding: getComputedStyle(listed.cells[1]).paddingTop };
+  });
+  assert.deepEqual(matchingRows.last, matchingRows.listed);
+  assert.ok(matchingRows.widths.every(delta => delta < 1) && matchingRows.sameHeight, JSON.stringify(matchingRows));
+  assert.equal(matchingRows.padding, '8px');
+  assert.ok(matchingRows.height < 45); checks++;
   assert.equal(await page.locator('#attempts').innerText(), '1');
   assert.equal(await page.locator('#guesses tr').count(), 1); checks++;
   await guess('lune');
-  assert.match(await page.locator('#feedback').innerText(), /déjà/);
+  assert.match(await page.locator('#word-input').evaluate(node => node.validationMessage), /déjà/);
   assert.equal(await page.locator('#attempts').innerText(), '1'); checks++;
   await page.getByRole('button', { name: 'Obtenir un indice' }).click();
   await page.waitForFunction(() => document.querySelector('#hint-count').textContent === '1');
   assert.equal(await page.locator('#attempts').innerText(), '1');
-  assert.equal(await page.locator('.guess-latest').count(), 1); checks++;
-  await page.locator('#sort').selectOption('chronological');
+  assert.equal(await page.locator('#guesses .guess-latest').count(), 1); checks++;
+  assert.equal(await page.locator('#sort').count(), 0);
   await page.reload();
   await page.locator('#word-input:enabled').waitFor();
-  assert.equal(await page.locator('#sort').inputValue(), 'chronological');
+  assert.equal(await page.locator('#sort').count(), 0);
   assert.equal(await page.locator('#guesses tr').count(), 2);
   assert.equal(await page.locator('#hint-count').innerText(), '1'); checks++;
   await page.getByRole('button', { name: 'Abandonner cette partie' }).click();
@@ -115,11 +130,12 @@ try {
   await page.locator('#word-input').fill(' E\u0301TOILE ');
   await page.getByRole('button', { name: 'Proposer' }).click();
   await page.waitForFunction(() => document.querySelector('#result').textContent.includes('étoile'));
-  assert.match(await page.locator('#result').innerText(), /trouvé/);
+  assert.equal(await page.locator('#result strong').innerText(), 'étoile');
+  assert.equal((await page.locator('#result').innerText()).replace(/\s+/g, ' ').trim(), 'étoile 1 essai et 0 indice.');
   assert.equal(await page.locator('#attempts').innerText(), '1'); checks++;
   await page.reload();
   await page.locator('#result').waitFor();
-  assert.match(await page.locator('#result').innerText(), /trouvé/); checks++;
+  assert.equal(await page.locator('#result strong').innerText(), 'étoile'); checks++;
   await page.getByRole('button', { name: 'Nouvelle partie', exact: false }).click();
   await page.locator('#word-input:enabled').waitFor();
   await guess('école');
@@ -144,7 +160,7 @@ try {
   await mobilePage.locator('#word-input').fill('étoile');
   await mobilePage.getByRole('button', { name: 'Proposer' }).tap();
   await mobilePage.locator('#result').waitFor();
-  assert.match(await mobilePage.locator('#result').innerText(), /trouvé/); checks++;
+  assert.equal(await mobilePage.locator('#result strong').innerText(), 'étoile'); checks++;
   await mobile.close();
 
   const restricted = await browser.newContext();
@@ -154,13 +170,13 @@ try {
   const noStorage = await restricted.newPage();
   await noStorage.goto(url);
   await noStorage.locator('#word-input:enabled').waitFor();
-  assert.match(await noStorage.locator('#feedback').innerText(), /sauvegarde locale/); checks++;
+  assert.match(await noStorage.locator('#word-input').getAttribute('title'), /sauvegarde locale/); checks++;
   await restricted.close();
 
   // A long history catches both upward jumps for hot words and downward jumps for cold words.
   const history = await browser.newContext({ viewport: { width: 1440, height: 1080 }, reducedMotion: 'no-preference' });
   await history.addInitScript(game => {
-    if (!localStorage.getItem('lexicalis.save.v1')) localStorage.setItem('lexicalis.save.v1', JSON.stringify({ game }));
+    if (!localStorage.getItem('lexicalis.save.v1')) localStorage.setItem('lexicalis.save.v1', JSON.stringify({ game, preferences: { sort: 'chronological' } }));
   }, { schemaVersion: 1, dataId: manifest.id, target: 0,
     entries: Array.from({ length: 80 }, (_, i) => ({ index: i + 20, kind: 'guess' })), outcome: 'playing' });
   const historyPage = await history.newPage();
@@ -168,6 +184,7 @@ try {
   await historyPage.goto(url);
   await historyPage.locator('#word-input:enabled').waitFor();
   assert.equal(await historyPage.locator('#last-guess-word').innerText(), 'mot99');
+  assert.equal(await historyPage.locator('#guesses tr:first-child td:nth-child(2)').innerText(), 'mot20');
   assert.equal(await historyPage.locator('.animate-progress').count(), 0); checks++;
   const historyScroll = historyPage.locator('.table-wrap');
   const oldPosition = await historyScroll.evaluate(node => { node.scrollTop = 170; return node.scrollTop; });
@@ -180,8 +197,8 @@ try {
   await historyGuess('astre');
   await historyPage.waitForFunction(() => document.querySelector('#last-guess-word').textContent === 'astre');
   assert.equal(await historyScroll.evaluate(node => node.scrollTop), oldPosition);
-  assert.equal(await historyPage.locator('#last-guess-number').innerText(), '#81');
-  assert.equal(await historyPage.locator('#last-guess-progression .progress-count').innerText(), '999 / 1 000');
+  assert.equal(await historyPage.locator('#last-guess-number').innerText(), '81');
+  assert.equal(await historyPage.locator('#last-guess-progression .progress-count').innerText(), '999');
   assert.equal(await historyPage.locator('#guesses .animate-progress').count(), 1);
   assert.equal(await historyPage.locator('#last-guess .animate-progress').count(), 1); checks++;
   const animated = await historyPage.locator('#last-guess .progress-fill').evaluate(node => {
@@ -215,24 +232,25 @@ try {
   await historyGuess('mot1004');
   await historyPage.waitForFunction(() => document.querySelector('#last-guess-word').textContent === 'mot1004');
   assert.equal(await historyScroll.evaluate(node => node.scrollTop), 0);
-  assert.match(await historyPage.locator('#last-guess-progression').innerText(), /Hors du top/);
+  assert.equal(await historyPage.locator('#last-guess-progression').innerText(), '—');
+  assert.match(await historyPage.locator('#last-guess-progression').getAttribute('aria-label'), /Hors des 1 000/);
   assert.equal(await historyPage.locator('#last-guess [role=meter]').count(), 0);
   assert.equal(await historyPage.locator('.animate-progress').count(), 0); checks++;
   await historyPage.setViewportSize({ width: 320, height: 900 });
   assert.ok(await historyPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-  const coldCellFits = await historyPage.locator('.guess-latest .temperature').evaluate(node => {
+  const coldCellFits = await historyPage.locator('#guesses .guess-latest .temperature').evaluate(node => {
     const range = document.createRange(); range.selectNodeContents(node);
     const text = range.getBoundingClientRect(), cell = node.getBoundingClientRect();
     return { fits: text.left >= cell.left - 1 && text.right <= cell.right + 1, textWidth: text.width, cellWidth: cell.width };
   });
   assert.ok(coldCellFits.fits, JSON.stringify(coldCellFits)); checks++;
-  await historyPage.locator('#sort').selectOption('chronological');
-  assert.equal(await historyPage.locator('#guesses .animate-progress').count(), 0);
-  const chronologicalPosition = await historyScroll.evaluate(node => { node.scrollTop = 200; return node.scrollTop; });
+  assert.equal(await historyPage.locator('#sort').count(), 0);
+  const nextPosition = await historyScroll.evaluate(node => { node.scrollTop = 200; return node.scrollTop; });
   await historyGuess('lune');
   await historyPage.waitForFunction(() => document.querySelector('#last-guess-word').textContent === 'lune');
-  assert.equal(await historyScroll.evaluate(node => node.scrollTop), chronologicalPosition);
-  assert.equal(await historyPage.locator('#last-guess-number').innerText(), '#83'); checks++;
+  assert.equal(await historyScroll.evaluate(node => node.scrollTop), nextPosition);
+  assert.equal(await historyPage.locator('#last-guess-number').innerText(), '83');
+  assert.equal(await historyPage.locator('#guesses tr:first-child td:nth-child(2)').innerText(), 'astre'); checks++;
   await historyPage.locator('#new-button').click();
   await historyPage.locator('#accept-confirm').click();
   await historyPage.waitForFunction(() => document.querySelector('#attempts').textContent === '0');
@@ -257,7 +275,7 @@ try {
   mode = 'corrupt';
   await page.reload();
   await page.locator('#retry-button').waitFor();
-  assert.match(await page.locator('#feedback').innerText(), /intégrité/);
+  assert.match(await page.locator('#retry-button').getAttribute('title'), /intégrité/);
   assert.ok(await page.locator('#word-input').isDisabled()); checks++;
   mode = 'valid';
   const origin = new URL(url).origin;
@@ -286,7 +304,7 @@ try {
     const remotePage = await externalContext.newPage();
     await remotePage.goto(url);
     await remotePage.locator('#word-input:enabled').waitFor();
-    assert.match(await remotePage.locator('#feedback').innerText(), /prêt/); checks++;
+    assert.equal(await remotePage.locator('#word-input').getAttribute('placeholder'), 'Écrivez un mot…'); checks++;
     const embedPage = await externalContext.newPage();
     await embedPage.setViewportSize({ width: 390, height: 844 });
     await embedPage.goto(`http://127.0.0.1:${external.address().port}/blogger.html`);
@@ -295,7 +313,7 @@ try {
     await frame.locator('#word-input').fill('étoile');
     await frame.getByRole('button', { name: 'Proposer' }).click();
     await frame.locator('#result').waitFor();
-    assert.match(await frame.locator('#result').innerText(), /trouvé/); checks++;
+    assert.equal(await frame.locator('#result strong').innerText(), 'étoile'); checks++;
     await externalContext.close();
   } finally { await new Promise(resolve => external.close(resolve)); }
   assert.deepEqual(issues, []);

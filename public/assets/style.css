@@ -20,10 +20,10 @@ body {
   color:var(--ink);
   line-height:1.6
 }
-button,input,select {
+button,input {
   font:inherit
 }
-button,a,input,select,summary {
+button,a,input,summary {
   -webkit-tap-highlight-color:transparent
 }
 button {
@@ -33,7 +33,7 @@ button:disabled {
   cursor:wait;
   opacity:.45
 }
-button:focus-visible,a:focus-visible,select:focus-visible,summary:focus-visible {
+button:focus-visible,a:focus-visible,summary:focus-visible {
   outline:2px solid var(--gold);
   outline-offset:5px
 }
@@ -47,7 +47,7 @@ p,h1,h2,h3 {
 button {
   border:0
 }
-button,select {
+button {
   color:inherit
 }
 
@@ -204,60 +204,11 @@ input:disabled {
   font-size:17px;
   line-height:0
 }
-.feedback {
-  min-height:42px;
-  padding:9px 0 5px;
-  color:var(--muted);
-  font-size:14px;
-  overflow-wrap:anywhere
-}
-.feedback.error {
-  color:#ffb8a3
-}
-.feedback.success {
-  color:#c0d7b5
-}
+
 #retry-button {
   margin-bottom:18px
 }
-.list-toolbar {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  border-top:1px solid var(--line);
-  padding:23px 0 16px
-}
-.list-toolbar h2 {
-  font-size:16px;
-  font-weight:500;
-  white-space:nowrap
-}
-.list-toolbar h2 span {
-  font-size:12px;
-  background:#27323f;
-  color:var(--muted);
-  padding:2px 6px;
-  border-radius:6px;
-  margin-left:5px
-}
-.list-toolbar label {
-  font-size:12px;
-  color:var(--muted);
-  white-space:nowrap
-}
-select {
-  font-size:13px;
-  background:transparent;
-  border:0;
-  border-bottom:1px solid #596470;
-  padding:4px;
-  margin-left:5px;
-  max-width:120px
-}
-select option {
-  background:var(--panel)
-}
+
 .table-wrap {
   min-height:278px;
   max-height:560px;
@@ -287,21 +238,15 @@ th {
   z-index:1
 }
 th:first-child {
-  width:38px;
   padding-left:0
 }
-th:nth-child(2) {
-  width:32%
-}
-th:nth-child(3) {
-  width:24%
-}
+
 th:last-child {
   padding-left:17px
 }
 td {
   border-bottom:1px solid #ffffff07;
-  padding:12px 6px;
+  padding:8px 6px;
   overflow-wrap:anywhere
 }
 td:first-child {
@@ -393,73 +338,10 @@ td:last-child {
 
 .sidebar {
   display:grid;
+  align-content:start;
   gap:18px
 }
-.compass-card {
-  padding:25px 23px;
-  background:#1d2830;
-  border:1px solid #344047;
-  border-radius:var(--radius)
-}
-.compass-card h2 {
-  font:26px Georgia,serif;
-  margin:12px 0
-}
-.compass-card>p:not(.eyebrow) {
-  font-size:16px;
-  color:#b4c1c7;
-  line-height:1.8
-}
-.heat-scale {
-  height:5px;
-  background:linear-gradient(90deg,#80bcdf,#90bf9e,#dbc373,#e7a16b,#dd7769);
-  border-radius:10px;
-  margin:24px 0 9px
-}
-.scale-labels {
-  display:flex;
-  justify-content:space-between;
-  color:var(--muted);
-  font-size:12px
-}
-.compass-card .rank-explanation {
-  margin-top:22px;
-  padding-top:20px;
-  border-top:1px solid #ffffff12;
-  font-size:14px!important
-}
-.rank-explanation strong {
-  font-weight:500;
-  color:var(--ink)
-}
-.best {
-  margin-top:20px;
-  padding-top:18px;
-  border-top:1px solid #ffffff12
-}
-.best>span {
-  font-size:11px;
-  letter-spacing:1px;
-  color:var(--muted)
-}
-.best>div {
-  display:flex;
-  gap:12px;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:8px
-}
-.best strong {
-  overflow-wrap:anywhere;
-  font-weight:500;
-  font-size:17px
-}
-.best b {
-  font-weight:500;
-  font-size:16px;
-  white-space:nowrap;
-  color:var(--temperature)
-}
+
 .help-card {
   border:1px dashed #41494f;
   border-radius:var(--radius);
@@ -671,7 +553,7 @@ dialog::backdrop {
   .game-panel {
     padding:20px 18px 0
   }
-  .compass-card,.help-card {
+  .help-card {
     padding:20px 16px
   }
 
@@ -717,44 +599,16 @@ dialog::backdrop {
   .primary span {
     margin-left:5px
   }
-  .list-toolbar {
-    padding-top:20px
-  }
-  .list-toolbar label {
-    font-size:0
-  }
-  select {
-    font-size:13px
-  }
+
   .table-wrap {
     min-height:260px
   }
   .sidebar {
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:minmax(0,1fr);
     gap:12px;
     margin-top:3px
   }
-  .compass-card {
-    padding:18px 14px
-  }
-  .compass-card h2 {
-    font-size:22px
-  }
-  .compass-card>p:not(.eyebrow) {
-    font-size:14px
-  }
-  .heat-scale {
-    margin-top:19px
-  }
-  .scale-labels {
-    font-size:11px;
-    gap:6px
-  }
-  .compass-card .rank-explanation {
-    font-size:13px!important;
-    margin-top:17px;
-    padding-top:15px
-  }
+
   .help-card {
     padding:17px 12px
   }
@@ -773,13 +627,6 @@ dialog::backdrop {
     display:none
   }
 
-  .best>div {
-    flex-wrap:wrap;
-    gap:3px
-  }
-  .best>span {
-    font-size:11px
-  }
   .neighbors {
     padding:20px 16px
   }
@@ -804,15 +651,11 @@ dialog::backdrop {
   .primary span {
     display:none
   }
-  .list-toolbar h2 {
-    font-size:14px
-  }
+
   th {
     font-size:11px
   }
-  th:first-child {
-    width:28px
-  }
+
   td,th {
     padding-left:3px;
     padding-right:3px
@@ -834,9 +677,7 @@ dialog::backdrop {
   #rules-button {
     font-size:12px
   }
-  .compass-card h2 {
-    font-size:24px
-  }
+
 }
 @media(prefers-reduced-motion:no-preference) {
   .guess-latest .latest-dot {
@@ -907,49 +748,7 @@ main {
   }
 }
 
-/* Readable feedback stays beside the input while the history stays in place. */
-.last-guess {
-  margin:0 0 18px;
-  padding:14px 16px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:#101924;
-}
-.last-guess-label {
-  margin-bottom:8px;
-  color:var(--muted);
-  font-size:14px;
-}
-.last-guess-details {
-  display:grid;
-  grid-template-columns:auto minmax(0,1fr) auto;
-  align-items:center;
-  gap:10px 12px;
-}
-.last-guess-number {
-  color:var(--muted);
-  font-size:14px;
-  font-variant-numeric:tabular-nums;
-}
-#last-guess-word {
-  font-size:19px;
-  font-weight:600;
-  overflow-wrap:anywhere;
-}
-#last-guess-temperature {
-  font-size:17px;
-  font-variant-numeric:tabular-nums;
-}
-#last-guess-progression {
-  grid-column:1/-1;
-}
-.last-guess .progression {
-  font-size:15px;
-}
-.outside-ranking {
-  color:var(--muted);
-  font-size:14px;
-}
+
 .column-label-compact {
   display:none;
 }
@@ -957,9 +756,7 @@ main {
   table {
     font-size:15px;
   }
-  .last-guess {
-    padding:12px;
-  }
+
 }
 @media(max-width:480px) {
   .column-label-full {
@@ -972,17 +769,6 @@ main {
     font-size:14px;
   }
 }
-@media(max-width:360px) {
-  th:nth-child(2) {
-    width:29%;
-  }
-  th:nth-child(3) {
-    width:30%;
-  }
-  .list-toolbar {
-    flex-wrap:wrap;
-  }
-}
 @media(prefers-reduced-motion:no-preference) {
   .animate-progress {
     animation:fill-progress 650ms cubic-bezier(.2,.7,.2,1) both;
@@ -990,5 +776,41 @@ main {
   @keyframes fill-progress {
     from { transform:scaleX(0); }
     to { transform:scaleX(var(--progress)); }
+  }
+}
+
+/* Both tables share the same column widths, type and row rendering. */
+.col-attempt {
+  width:38px;
+}
+.col-word {
+  width:32%;
+}
+.col-temperature {
+  width:24%;
+}
+.last-guess {
+  margin-top:16px;
+  overflow-y:auto;
+  overflow-anchor:none;
+  scrollbar-gutter:stable;
+  scrollbar-width:thin;
+}
+.table-wrap {
+  margin-top:12px;
+}
+input[aria-invalid="true"] {
+  border-color:#f29382;
+  box-shadow:0 0 0 3px #f2938215;
+}
+@media(max-width:360px) {
+  .col-attempt {
+    width:28px;
+  }
+  .col-word {
+    width:29%;
+  }
+  .col-temperature {
+    width:30%;
   }
 }

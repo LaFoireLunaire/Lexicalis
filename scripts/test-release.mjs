@@ -96,7 +96,7 @@ print('Archive : CRC, SHA-256 et inventaire vérifiés ; extraction sous /Lexica
     assert.ok(Math.abs(bounds.width - viewport.width) < 1 && Math.abs(bounds.height - viewport.height) < 1, JSON.stringify({ bounds, viewport }));
     assert.ok(await frame.locator('html').evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     assert.equal(await frame.locator('.masthead h1').innerText(), 'Lexicalis.');
-    assert.equal(await frame.locator('.brand, .introduction, .unlimited, .panel-foot, .privacy').count(), 0);
+    assert.equal(await frame.locator('.brand, .introduction, .unlimited, .panel-foot, .privacy, .compass-card, .list-toolbar, #feedback, #sort').count(), 0);
     assert.equal(await frame.locator('.help-card h2').innerText(), 'Un petit coup de pouce ?');
     assert.equal(await frame.locator('.help-card p').innerText(), 'Un indice dévoile un mot voisin.');
     const gameWidth = await frame.locator('.lexicalis').evaluate(node => node.getBoundingClientRect().width);
