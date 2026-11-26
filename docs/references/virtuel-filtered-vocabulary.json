@@ -1,0 +1,385 @@
+{
+  "pairs": 39,
+  "comparedPairs": 36,
+  "missingPairs": 3,
+  "missingWords": [
+    "customisation",
+    "cyborg",
+    "multijoueur"
+  ],
+  "temperatureMismatches": 0,
+  "progressionMismatches": 35,
+  "mismatches": [
+    {
+      "line": 3,
+      "target": "virtuel",
+      "guess": "ordinateur",
+      "expected": 39.53,
+      "actual": 39.52710436826589,
+      "delta": 0.002895631734112669,
+      "expectedProgression": "984",
+      "actualProgression": 986
+    },
+    {
+      "line": 4,
+      "target": "virtuel",
+      "guess": "avatar",
+      "expected": 36.02,
+      "actual": 36.019677528304825,
+      "delta": 0.00032247169517773955,
+      "expectedProgression": "969",
+      "actualProgression": 976
+    },
+    {
+      "line": 5,
+      "target": "virtuel",
+      "guess": "univers",
+      "expected": 35.34,
+      "actual": 35.3370820139938,
+      "delta": 0.002917986006202966,
+      "expectedProgression": "964",
+      "actualProgression": 973
+    },
+    {
+      "line": 6,
+      "target": "virtuel",
+      "guess": "jeu",
+      "expected": 33.09,
+      "actual": 33.08591591205514,
+      "delta": 0.004084087944860926,
+      "expectedProgression": "938",
+      "actualProgression": 954
+    },
+    {
+      "line": 7,
+      "target": "virtuel",
+      "guess": "interface",
+      "expected": 32.91,
+      "actual": 32.90746205927919,
+      "delta": 0.0025379407208063753,
+      "expectedProgression": "931",
+      "actualProgression": 948
+    },
+    {
+      "line": 8,
+      "target": "virtuel",
+      "guess": "robot",
+      "expected": 32.63,
+      "actual": 32.631034515219824,
+      "delta": 0.0010345152198212304,
+      "expectedProgression": "928",
+      "actualProgression": 946
+    },
+    {
+      "line": 9,
+      "target": "virtuel",
+      "guess": "ludique",
+      "expected": 32.05,
+      "actual": 32.05490221524339,
+      "delta": 0.0049022152433906285,
+      "expectedProgression": "920",
+      "actualProgression": 941
+    },
+    {
+      "line": 10,
+      "target": "virtuel",
+      "guess": "écran",
+      "expected": 31.65,
+      "actual": 31.65461625563167,
+      "delta": 0.004616255631670896,
+      "expectedProgression": "913",
+      "actualProgression": 935
+    },
+    {
+      "line": 11,
+      "target": "virtuel",
+      "guess": "monde",
+      "expected": 31.61,
+      "actual": 31.61080312512653,
+      "delta": 0.0008031251265308015,
+      "expectedProgression": "912",
+      "actualProgression": 934
+    },
+    {
+      "line": 12,
+      "target": "virtuel",
+      "guess": "échange",
+      "expected": 28.88,
+      "actual": 28.876761879988965,
+      "delta": 0.0032381200110336295,
+      "expectedProgression": "865",
+      "actualProgression": 891
+    },
+    {
+      "line": 13,
+      "target": "virtuel",
+      "guess": "artificiel",
+      "expected": 28.72,
+      "actual": 28.717639992880294,
+      "delta": 0.0023600071197051875,
+      "expectedProgression": "862",
+      "actualProgression": 888
+    },
+    {
+      "line": 14,
+      "target": "virtuel",
+      "guess": "vidéo",
+      "expected": 28.23,
+      "actual": 28.234653140611478,
+      "delta": 0.004653140611477369,
+      "expectedProgression": "847",
+      "actualProgression": 882
+    },
+    {
+      "line": 15,
+      "target": "virtuel",
+      "guess": "logiciel",
+      "expected": 28.2,
+      "actual": 28.195227922146472,
+      "delta": 0.004772077853527179,
+      "expectedProgression": "844",
+      "actualProgression": 880
+    },
+    {
+      "line": 16,
+      "error": "Mot absent du vocabulaire filtré",
+      "target": "virtuel",
+      "guess": "multijoueur"
+    },
+    {
+      "line": 17,
+      "target": "virtuel",
+      "guess": "technologie",
+      "expected": 27.59,
+      "actual": 27.593229783892543,
+      "delta": 0.0032297838925430256,
+      "expectedProgression": "829",
+      "actualProgression": 871
+    },
+    {
+      "line": 18,
+      "target": "virtuel",
+      "guess": "utilisateur",
+      "expected": 27.58,
+      "actual": 27.57704543002139,
+      "delta": 0.0029545699786091006,
+      "expectedProgression": "827",
+      "actualProgression": 869
+    },
+    {
+      "line": 19,
+      "target": "virtuel",
+      "guess": "robotique",
+      "expected": 27.18,
+      "actual": 27.183133012142726,
+      "delta": 0.0031330121427259883,
+      "expectedProgression": "810",
+      "actualProgression": 858
+    },
+    {
+      "line": 20,
+      "target": "virtuel",
+      "guess": "tactile",
+      "expected": 27.08,
+      "actual": 27.08480039005424,
+      "delta": 0.004800390054242598,
+      "expectedProgression": "805",
+      "actualProgression": 855
+    },
+    {
+      "line": 21,
+      "target": "virtuel",
+      "guess": "réseau",
+      "expected": 27.06,
+      "actual": 27.059672128797597,
+      "delta": 0.0003278712024012975,
+      "expectedProgression": "804",
+      "actualProgression": 854
+    },
+    {
+      "line": 22,
+      "target": "virtuel",
+      "guess": "mobile",
+      "expected": 26.51,
+      "actual": 26.510977081724242,
+      "delta": 0.0009770817242404917,
+      "expectedProgression": "769",
+      "actualProgression": 830
+    },
+    {
+      "line": 23,
+      "target": "virtuel",
+      "guess": "ligne",
+      "expected": 25.61,
+      "actual": 25.605835646698218,
+      "delta": 0.004164353301781887,
+      "expectedProgression": "731",
+      "actualProgression": 802
+    },
+    {
+      "line": 24,
+      "target": "virtuel",
+      "guess": "connexion",
+      "expected": 24.98,
+      "actual": 24.975794625015,
+      "delta": 0.004205374985001953,
+      "expectedProgression": "703",
+      "actualProgression": 785
+    },
+    {
+      "line": 25,
+      "target": "virtuel",
+      "guess": "informatique",
+      "expected": 24.77,
+      "actual": 24.77265164081728,
+      "delta": 0.0026516408172803096,
+      "expectedProgression": "696",
+      "actualProgression": 776
+    },
+    {
+      "line": 26,
+      "target": "virtuel",
+      "guess": "communication",
+      "expected": 24.05,
+      "actual": 24.05281365587729,
+      "delta": 0.002813655877289989,
+      "expectedProgression": "645",
+      "actualProgression": 735
+    },
+    {
+      "line": 27,
+      "target": "virtuel",
+      "guess": "serveur",
+      "expected": 23.72,
+      "actual": 23.72201989831141,
+      "delta": 0.002019898311409918,
+      "expectedProgression": "614",
+      "actualProgression": 709
+    },
+    {
+      "line": 28,
+      "error": "Mot absent du vocabulaire filtré",
+      "target": "virtuel",
+      "guess": "cyborg"
+    },
+    {
+      "line": 29,
+      "error": "Mot absent du vocabulaire filtré",
+      "target": "virtuel",
+      "guess": "customisation"
+    },
+    {
+      "line": 30,
+      "target": "virtuel",
+      "guess": "langage",
+      "expected": 22.79,
+      "actual": 22.78724277814757,
+      "delta": 0.002757221852430547,
+      "expectedProgression": "537",
+      "actualProgression": 647
+    },
+    {
+      "line": 31,
+      "target": "virtuel",
+      "guess": "machine",
+      "expected": 22.64,
+      "actual": 22.638956292860833,
+      "delta": 0.0010437071391677932,
+      "expectedProgression": "514",
+      "actualProgression": 628
+    },
+    {
+      "line": 32,
+      "target": "virtuel",
+      "guess": "intelligent",
+      "expected": 22.26,
+      "actual": 22.263664246966037,
+      "delta": 0.0036642469660357335,
+      "expectedProgression": "481",
+      "actualProgression": 602
+    },
+    {
+      "line": 33,
+      "target": "virtuel",
+      "guess": "graphique",
+      "expected": 22.15,
+      "actual": 22.148590598691136,
+      "delta": 0.001409401308862357,
+      "expectedProgression": "464",
+      "actualProgression": 587
+    },
+    {
+      "line": 34,
+      "target": "virtuel",
+      "guess": "modèle",
+      "expected": 22.09,
+      "actual": 22.089043300157943,
+      "delta": 0.0009566998420567074,
+      "expectedProgression": "453",
+      "actualProgression": 581
+    },
+    {
+      "line": 35,
+      "target": "virtuel",
+      "guess": "lecteur",
+      "expected": 22.04,
+      "actual": 22.042824564280636,
+      "delta": 0.002824564280636821,
+      "expectedProgression": "448",
+      "actualProgression": 576
+    },
+    {
+      "line": 36,
+      "target": "virtuel",
+      "guess": "processeur",
+      "expected": 21.36,
+      "actual": 21.355047640782992,
+      "delta": 0.00495235921700754,
+      "expectedProgression": "365",
+      "actualProgression": 514
+    },
+    {
+      "line": 37,
+      "target": "virtuel",
+      "guess": "unique",
+      "expected": 21.25,
+      "actual": 21.246467509408482,
+      "delta": 0.003532490591517501,
+      "expectedProgression": "342",
+      "actualProgression": 498
+    },
+    {
+      "line": 38,
+      "target": "virtuel",
+      "guess": "console",
+      "expected": 20.64,
+      "actual": 20.641579736672345,
+      "delta": 0.001579736672344012,
+      "expectedProgression": "268",
+      "actualProgression": 441
+    },
+    {
+      "line": 39,
+      "target": "virtuel",
+      "guess": "personnage",
+      "expected": 20.58,
+      "actual": 20.57875580817093,
+      "delta": 0.0012441918290697629,
+      "expectedProgression": "252",
+      "actualProgression": 431
+    },
+    {
+      "line": 40,
+      "target": "virtuel",
+      "guess": "clic",
+      "expected": 20.35,
+      "actual": 20.353083738053858,
+      "delta": 0.003083738053856422,
+      "expectedProgression": "221",
+      "actualProgression": 405
+    }
+  ],
+  "tolerance": 0.011,
+  "dataId": "972a8d09039d8c3879abe870",
+  "note": "Un accord sur cet échantillon ne prouve pas une identité officielle avec Cémantix."
+}

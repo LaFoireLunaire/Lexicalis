@@ -1,0 +1,365 @@
+{
+  "referencePairs": 39,
+  "comparedPairs": 39,
+  "missing": [],
+  "temperatureMismatches": [],
+  "sameTwoDecimals": 39,
+  "maxAbsoluteDelta": 0.004952212334806916,
+  "tolerance": 0.011,
+  "modelSha256": "8ec240bf8270138f5bb29232cf93e3f44060a42cacec57b702dbe2dbf67d7976",
+  "modelVerification": "publisher-md5-over-https",
+  "results": [
+    {
+      "target": "virtuel",
+      "guess": "virtuel",
+      "expected": 100.0,
+      "actual": 100.0,
+      "delta": 0.0,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "ordinateur",
+      "expected": 39.53,
+      "actual": 39.527104378547705,
+      "delta": 0.002895621452296382,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "avatar",
+      "expected": 36.02,
+      "actual": 36.019677410496705,
+      "delta": 0.0003225895032983317,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "univers",
+      "expected": 35.34,
+      "actual": 35.33708184203431,
+      "delta": 0.0029181579656949452,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "jeu",
+      "expected": 33.09,
+      "actual": 33.0859157975857,
+      "delta": 0.004084202414304627,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "interface",
+      "expected": 32.91,
+      "actual": 32.90746181967882,
+      "delta": 0.002538180321174366,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "robot",
+      "expected": 32.63,
+      "actual": 32.631034667781336,
+      "delta": 0.0010346677813330984,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "ludique",
+      "expected": 32.05,
+      "actual": 32.05490248018311,
+      "delta": 0.0049024801831123455,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "écran",
+      "expected": 31.65,
+      "actual": 31.654616536735176,
+      "delta": 0.00461653673517759,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "monde",
+      "expected": 31.61,
+      "actual": 31.61080300590264,
+      "delta": 0.0008030059026395975,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "échange",
+      "expected": 28.88,
+      "actual": 28.876761946458284,
+      "delta": 0.0032380535417146916,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "artificiel",
+      "expected": 28.72,
+      "actual": 28.717639846299004,
+      "delta": 0.002360153700994516,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "vidéo",
+      "expected": 28.23,
+      "actual": 28.23465328793573,
+      "delta": 0.0046532879357279455,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "logiciel",
+      "expected": 28.2,
+      "actual": 28.195227916416638,
+      "delta": 0.004772083583361564,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "multijoueur",
+      "expected": 27.99,
+      "actual": 27.99065434609343,
+      "delta": 0.0006543460934302914,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "technologie",
+      "expected": 27.59,
+      "actual": 27.59322953308363,
+      "delta": 0.003229533083629832,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "utilisateur",
+      "expected": 27.58,
+      "actual": 27.577045457927795,
+      "delta": 0.0029545420722030258,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "robotique",
+      "expected": 27.18,
+      "actual": 27.18313297238424,
+      "delta": 0.0031329723842397073,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "tactile",
+      "expected": 27.08,
+      "actual": 27.08480050079319,
+      "delta": 0.004800500793191276,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "réseau",
+      "expected": 27.06,
+      "actual": 27.059671992895044,
+      "delta": 0.0003280071049545086,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "mobile",
+      "expected": 26.51,
+      "actual": 26.510977193355117,
+      "delta": 0.000977193355115702,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "ligne",
+      "expected": 25.61,
+      "actual": 25.60583567601445,
+      "delta": 0.00416432398554889,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "connexion",
+      "expected": 24.98,
+      "actual": 24.975794696075617,
+      "delta": 0.00420530392438323,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "informatique",
+      "expected": 24.77,
+      "actual": 24.772651539150484,
+      "delta": 0.0026515391504844388,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "communication",
+      "expected": 24.05,
+      "actual": 24.052813869481763,
+      "delta": 0.002813869481762765,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "serveur",
+      "expected": 23.72,
+      "actual": 23.72202032070589,
+      "delta": 0.002020320705891976,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "cyborg",
+      "expected": 23.63,
+      "actual": 23.63200613513265,
+      "delta": 0.002006135132649689,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "customisation",
+      "expected": 23.53,
+      "actual": 23.529992712619254,
+      "delta": 7.287380746845429e-06,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "langage",
+      "expected": 22.79,
+      "actual": 22.78724299596116,
+      "delta": 0.002757004038837607,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "machine",
+      "expected": 22.64,
+      "actual": 22.63895631978769,
+      "delta": 0.0010436802123088285,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "intelligent",
+      "expected": 22.26,
+      "actual": 22.26366422137871,
+      "delta": 0.0036642213787096978,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "graphique",
+      "expected": 22.15,
+      "actual": 22.148590734761427,
+      "delta": 0.0014092652385713222,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "modèle",
+      "expected": 22.09,
+      "actual": 22.089043118154567,
+      "delta": 0.0009568818454326333,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "lecteur",
+      "expected": 22.04,
+      "actual": 22.04282418099133,
+      "delta": 0.0028241809913325255,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "processeur",
+      "expected": 21.36,
+      "actual": 21.355047787665193,
+      "delta": 0.004952212334806916,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "unique",
+      "expected": 21.25,
+      "actual": 21.24646755115385,
+      "delta": 0.003532448846151226,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "console",
+      "expected": 20.64,
+      "actual": 20.641579421426083,
+      "delta": 0.0015794214260829165,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "personnage",
+      "expected": 20.58,
+      "actual": 20.578755779910395,
+      "delta": 0.0012442200896032318,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    },
+    {
+      "target": "virtuel",
+      "guess": "clic",
+      "expected": 20.35,
+      "actual": 20.35308374560087,
+      "delta": 0.003083745600868326,
+      "withinTolerance": true,
+      "sameTwoDecimals": true
+    }
+  ],
+  "note": "Températures cosinus du modèle original, sans filtrage. Aucun classement comparé ; accord sur cet échantillon seulement, pas de confirmation officielle."
+}
