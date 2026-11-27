@@ -94,9 +94,8 @@ button {
 
 .game-layout {
   display:grid;
-  grid-template-columns:minmax(0,1fr) 285px;
+  grid-template-columns:minmax(0,1fr);
   align-items:stretch;
-  gap:25px
 }
 .game-panel {
   background:var(--panel);
@@ -131,11 +130,18 @@ button {
   border-radius:50%;
   box-shadow:0 0 8px #b4cda944
 }
+.game-tools {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  margin:24px 0
+}
 .counters {
   display:flex;
   gap:12px;
   align-items:baseline;
-  margin:24px 0
 }
 .counters strong {
   font-size:28px;
@@ -152,6 +158,16 @@ button {
   border-left:1px solid #47515e;
   align-self:center;
   margin:0 5px
+}
+#hint-button {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  white-space:nowrap;
+  margin-left:auto
+}
+#hint-button span {
+  color:var(--gold)
 }
 
 #guess-form label {
@@ -316,50 +332,6 @@ td:last-child {
   text-align:right;
   white-space:nowrap;
 }
-.empty {
-  text-align:center;
-  padding:40px 10px 45px
-}
-.empty-symbol {
-  color:var(--gold);
-  font-size:38px;
-  line-height:1.4;
-  font-weight:200
-}
-.empty h3 {
-  font:20px Georgia,serif;
-  margin:10px 0
-}
-.empty p {
-  font-size:16px;
-  color:var(--muted);
-  line-height:1.8
-}
-
-.sidebar {
-  display:grid;
-  align-content:start;
-  gap:18px
-}
-
-.help-card {
-  border:1px dashed #41494f;
-  border-radius:var(--radius);
-  padding:22px;
-  text-align:center
-}
-.help-symbol {
-  color:var(--gold);
-  font-size:27px
-}
-.help-card h2 {
-  font:19px Georgia,serif;
-  margin:7px 0 11px
-}
-.help-card p {
-  color:var(--muted);
-  font-size:14px
-}
 .secondary {
   border:1px solid #57616a;
   border-radius:9px;
@@ -370,24 +342,6 @@ td:last-child {
 .secondary:hover:not(:disabled) {
   background:#ffffff08;
   border-color:var(--gold)
-}
-.help-card .secondary {
-  display:block;
-  width:100%;
-  margin:22px 0 8px;
-  text-align:left
-}
-.help-card .secondary span {
-  float:right;
-  color:var(--gold)
-}
-.quiet {
-  padding:8px 0;
-  color:var(--muted);
-  background:none;
-  font-size:13px;
-  text-decoration:underline;
-  text-underline-offset:3px
 }
 
 .result {
@@ -535,26 +489,13 @@ dialog::backdrop {
   display:none!important
 }
 @media(min-width:1400px) {
-
-  .game-layout {
-    grid-template-columns:minmax(0,1fr) 305px;
-    gap:30px
-  }
   .table-wrap {
     min-height:315px
   }
 }
 @media(max-width:850px) {
-
-  .game-layout {
-    grid-template-columns:minmax(0,1fr) 240px;
-    gap:16px
-  }
   .game-panel {
     padding:20px 18px 0
-  }
-  .help-card {
-    padding:20px 16px
   }
 
 }
@@ -573,18 +514,33 @@ dialog::backdrop {
     letter-spacing:1.4px
   }
 
-  .game-layout {
-    grid-template-columns:minmax(0,1fr)
-  }
   .game-panel {
     border-radius:16px;
     padding:18px 16px 0
   }
+  .game-tools {
+    margin:18px 0
+  }
+  .panel-top .text-button {
+    font-size:13px
+  }
   .counters {
-    margin:22px 0
+    gap:8px
   }
   .counters strong {
-    font-size:26px
+    font-size:20px
+  }
+  .counters p span {
+    font-size:13px
+  }
+  .counter-divider {
+    height:12px;
+    margin:0 4px
+  }
+  #hint-button {
+    font-size:13px;
+    padding:9px 12px;
+    gap:8px
   }
   .input-row {
     gap:8px
@@ -602,29 +558,6 @@ dialog::backdrop {
 
   .table-wrap {
     min-height:260px
-  }
-  .sidebar {
-    grid-template-columns:minmax(0,1fr);
-    gap:12px;
-    margin-top:3px
-  }
-
-  .help-card {
-    padding:17px 12px
-  }
-  .help-card h2 {
-    font-size:19px
-  }
-  .help-card p {
-    font-size:13px
-  }
-  .help-card .secondary {
-    font-size:13px;
-    padding:10px 8px;
-    margin-top:18px
-  }
-  .help-card .secondary span {
-    display:none
   }
 
   .neighbors {
@@ -665,9 +598,6 @@ dialog::backdrop {
   }
   .progression {
     gap:3px
-  }
-  .sidebar {
-    grid-template-columns:1fr
   }
 
   .masthead {

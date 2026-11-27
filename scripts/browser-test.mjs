@@ -76,6 +76,11 @@ try {
   await page.getByRole('button', { name: 'Réessayer le chargement' }).click();
   await page.locator('#word-input:enabled').waitFor();
   const fixtureLoadMs = performance.now() - loadStart;
+  assert.equal(await page.locator('.sidebar, .help-card, #empty').count(), 0);
+  assert.equal(await page.getByText('Tout commence par un mot.').count(), 0);
+  assert.equal(await page.locator('.game-panel #hint-button').count(), 1);
+  assert.ok(await page.locator('#new-button').isHidden());
+  assert.ok(await page.getByRole('button', { name: 'Abandonner la partie', exact: true }).isEnabled()); checks++;
   async function guess(word) {
     await page.locator('#word-input').fill(word);
     await page.getByRole('button', { name: 'Proposer' }).click();
@@ -128,40 +133,65 @@ try {
   assert.equal(await page.locator('#sort').count(), 0);
   assert.equal(await page.locator('#guesses tr').count(), 2);
   assert.equal(await page.locator('#hint-count').innerText(), '1'); checks++;
-  await page.getByRole('button', { name: 'Abandonner cette partie' }).click();
+  await page.getByRole('button', { name: 'Abandonner la partie', exact: true }).click();
   await page.getByRole('button', { name: 'Continuer à chercher' }).click();
   assert.ok(await page.locator('#word-input').isEnabled());
-  await page.getByRole('button', { name: 'Abandonner cette partie' }).click();
+  assert.ok(await page.locator('#new-button').isHidden());
+  await page.getByRole('button', { name: 'Abandonner la partie', exact: true }).click();
   await page.getByRole('button', { name: 'Abandonner et révéler' }).click();
   await page.locator('#result').waitFor();
   assert.match(await page.locator('#result').innerText(), /étoile/);
   assert.equal(await page.locator('#neighbors li').count(), 1000);
   assert.ok(await page.locator('#word-input').isDisabled()); checks++;
+  assert.ok(await page.locator('#give-up-button').isHidden());
+  assert.ok(await page.locator('#new-button').isVisible());
   await page.getByRole('button', { name: 'Nouvelle partie', exact: false }).click();
   await page.locator('#word-input:enabled').waitFor();
+  assert.ok(await page.locator('#new-button').isHidden());
+  assert.ok(await page.locator('#give-up-button').isVisible());
   await page.locator('#word-input').fill(' E\u0301TOILE ');
   await page.getByRole('button', { name: 'Proposer' }).click();
   await page.waitForFunction(() => document.querySelector('#result').textContent.includes('étoile'));
   assert.equal(await page.locator('#result strong').innerText(), 'étoile');
   assert.equal((await page.locator('#result').innerText()).replace(/\s+/g, ' ').trim(), 'étoile 1 essai et 0 indice.');
   assert.equal(await page.locator('#attempts').innerText(), '1'); checks++;
+  assert.ok(await page.locator('#give-up-button').isHidden());
+  assert.ok(await page.locator('#new-button').isVisible());
   await page.reload();
   await page.locator('#result').waitFor();
   assert.equal(await page.locator('#result strong').innerText(), 'étoile'); checks++;
+  assert.ok(await page.locator('#new-button').isVisible());
+  assert.ok(await page.locator('#give-up-button').isHidden());
   await page.getByRole('button', { name: 'Nouvelle partie', exact: false }).click();
   await page.locator('#word-input:enabled').waitFor();
   await guess('école');
-  await page.getByRole('button', { name: 'Nouvelle partie', exact: false }).click();
+  await page.getByRole('button', { name: 'Abandonner la partie', exact: true }).click();
   await page.getByRole('button', { name: 'Continuer à chercher' }).click();
   assert.equal(await page.locator('#attempts').innerText(), '1'); checks++;
   await mkdir('test-results', { recursive: true });
   await page.screenshot({ path: 'test-results/desktop.png', fullPage: true });
+  const desktopCounters = await page.locator('.counters').evaluate(node => ({
+    number: parseFloat(getComputedStyle(node.querySelector('strong')).fontSize),
+    label: parseFloat(getComputedStyle(node.querySelector('p span')).fontSize),
+  }));
 
   for (const width of [320, 360, 390, 768, 1024]) {
     await page.setViewportSize({ width, height: 900 });
     const overflow = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth, elements: [...document.querySelectorAll('body *')].filter(el => el.getBoundingClientRect().right > innerWidth + 1).map(el => ({ tag: el.tagName, className: el.className, right: el.getBoundingClientRect().right })) }));
     assert.ok(overflow.scroll <= overflow.width, `Horizontal overflow: ${JSON.stringify(overflow)}`);
     assert.ok(await page.locator('#guess-button').isVisible()); checks++;
+    const layout = await page.locator('.game-layout').boundingBox();
+    const panel = await page.locator('.game-panel').boundingBox();
+    assert.ok(Math.abs(layout.width - panel.width) < 1);
+    assert.ok(await page.locator('#give-up-button').isVisible());
+    assert.ok(await page.locator('.game-panel #hint-button').isVisible());
+    if (width <= 680) {
+      const mobileCounters = await page.locator('.counters').evaluate(node => ({
+        number: parseFloat(getComputedStyle(node.querySelector('strong')).fontSize),
+        label: parseFloat(getComputedStyle(node.querySelector('p span')).fontSize),
+      }));
+      assert.ok(mobileCounters.number < desktopCounters.number && mobileCounters.label < desktopCounters.label);
+    }
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: 'test-results/mobile.png', fullPage: true });
@@ -287,8 +317,11 @@ try {
   assert.equal(await historyPage.locator('#attempts').innerText(), '83');
   assert.equal(await historyScroll.evaluate(node => node.scrollTop), nextPosition);
   assert.equal(await historyPage.locator('.animate-progress').count(), 0); checks++;
-  await historyPage.locator('#new-button').click();
+  assert.ok(await historyPage.locator('#new-button').isHidden());
+  await historyPage.locator('#give-up-button').click();
   await historyPage.locator('#accept-confirm').click();
+  await historyPage.locator('#result').waitFor();
+  await historyPage.locator('#new-button').click();
   await historyPage.waitForFunction(() => document.querySelector('#attempts').textContent === '0');
   assert.ok(await historyPage.locator('#last-guess').isHidden());
   assert.equal(await historyScroll.evaluate(node => node.scrollTop), 0); checks++;

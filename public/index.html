@@ -22,9 +22,13 @@
     <div class="game-layout">
       <section class="game-panel" aria-label="Votre partie">
         <div class="panel-top"><div class="live-label"><span></span> PARTIE LIBRE</div>
-          <button type="button" id="new-button" class="text-button" disabled><span aria-hidden="true">↻</span> Nouvelle partie</button>
+          <button type="button" id="give-up-button" class="text-button" disabled>Abandonner la partie</button>
+          <button type="button" id="new-button" class="text-button" hidden disabled><span aria-hidden="true">↻</span> Nouvelle partie</button>
         </div>
-        <div class="counters"><p><strong id="attempts">0</strong> <span id="attempt-label">essai</span></p><span class="counter-divider"></span><p><strong id="hint-count">0</strong> <span id="hint-label">indice</span></p></div>
+        <div class="game-tools">
+          <div class="counters"><p><strong id="attempts">0</strong> <span id="attempt-label">essai</span></p><span class="counter-divider"></span><p><strong id="hint-count">0</strong> <span id="hint-label">indice</span></p></div>
+          <button id="hint-button" class="secondary" type="button" disabled>Obtenir un indice <span aria-hidden="true">✦</span></button>
+        </div>
 
         <div id="result" class="result" role="status" hidden></div>
         <form id="guess-form" autocomplete="off">
@@ -44,13 +48,8 @@
 
         <div class="table-wrap">
           <table id="guesses-table"><caption class="sr-only">Vos propositions et leurs proximités avec le mot mystère</caption><colgroup><col class="col-attempt"><col class="col-word"><col class="col-temperature"><col class="col-progression"></colgroup><thead><tr><th scope="col">N°</th><th scope="col">Mot</th><th scope="col" class="numeric" aria-label="Température"><span class="column-label-full">Température</span><span class="column-label-compact" aria-hidden="true">Temp.</span></th><th scope="col" aria-label="Progression"><span class="column-label-full">Progression</span><span class="column-label-compact" aria-hidden="true">Progr.</span></th></tr></thead><tbody id="guesses"></tbody></table>
-          <div class="empty" id="empty"><div class="empty-symbol" aria-hidden="true">✧</div><h3>Tout commence par un mot.</h3><p>Un objet, une émotion, une idée…<br>Laissez votre intuition ouvrir la voie.</p></div>
         </div>
       </section>
-
-      <aside class="sidebar" aria-label="Aide et indices">
-        <section class="help-card"><div class="help-symbol" aria-hidden="true">✺</div><h2>Un petit coup de pouce ?</h2><p>Un indice dévoile un mot voisin.</p><button id="hint-button" class="secondary" type="button" disabled>Obtenir un indice <span aria-hidden="true">✦</span></button><button id="give-up-button" class="quiet" type="button" disabled>Abandonner cette partie</button></section>
-      </aside>
     </div>
     <section id="neighbors-section" class="neighbors" hidden aria-labelledby="neighbors-title"><h2 id="neighbors-title">Dans l’orbite du mot mystère</h2><p>Les 1 000 mots les plus proches, classés selon leur proximité réelle.</p><details><summary>Explorer les mots voisins</summary><ol id="neighbors"></ol></details></section>
   </main>

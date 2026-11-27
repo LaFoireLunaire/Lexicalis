@@ -50,11 +50,14 @@ function showSaveWarning() {
 
 function controls() {
   const playing = ready && current?.outcome === 'playing';
+  const finished = Boolean(current && current.outcome !== 'playing');
   $('word-input').disabled = !playing;
   $('guess-button').disabled = !playing || busy;
   $('new-button').disabled = !ready || busy;
+  $('new-button').hidden = !finished;
   $('hint-button').disabled = !playing || busy;
   $('give-up-button').disabled = !playing || busy;
+  $('give-up-button').hidden = finished;
   $('guess-form').setAttribute('aria-busy', String(busy));
 }
 
@@ -160,7 +163,6 @@ function renderTable({ animatedSequence = null, resetScroll = false } = {}) {
     animate: entry.sequence === animatedSequence,
   }));
   $('guesses').replaceChildren(fragment);
-  $('empty').hidden = entries.length > 0;
   // Keep the player's scroll position even when a new row sorts above it.
   wrap.scrollTop = scrollTop;
 }
@@ -220,8 +222,8 @@ async function action(name, payload) {
 
 function confirmAction(name) {
   if (!ready || busy) return;
-  if (name === 'new' && (current.outcome !== 'playing' || current.entries.length === 0)) {
-    void action('new');
+  if (name === 'new') {
+    if (current.outcome !== 'playing') void action('new');
     return;
   }
   const giveUp = name === 'give-up';

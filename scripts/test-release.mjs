@@ -120,9 +120,13 @@ print('Archive : CRC, SHA-256 et inventaire vérifiés ; extraction sous /Lexica
     const logo = await frame.locator('.game-logo').boundingBox();
     assert.ok(Math.abs(logo.width - (viewport.width <= 680 ? 120 : 150)) < 1);
     assert.ok(Math.abs(logo.width / logo.height - 2170 / 725) < 0.01);
-    assert.equal(await frame.locator('.brand, .introduction, .unlimited, .panel-foot, .privacy, .compass-card, .list-toolbar, #feedback, #sort').count(), 0);
-    assert.equal(await frame.locator('.help-card h2').innerText(), 'Un petit coup de pouce ?');
-    assert.equal(await frame.locator('.help-card p').innerText(), 'Un indice dévoile un mot voisin.');
+    assert.equal(await frame.locator('.brand, .introduction, .unlimited, .panel-foot, .privacy, .compass-card, .list-toolbar, #feedback, #sort, .sidebar, .help-card, #empty').count(), 0);
+    assert.equal(await frame.locator('.game-panel #hint-button').count(), 1);
+    assert.ok(await frame.locator('#new-button').isHidden());
+    assert.ok(await frame.locator('#give-up-button').isVisible());
+    const layout = await frame.locator('.game-layout').boundingBox();
+    const panel = await frame.locator('.game-panel').boundingBox();
+    assert.ok(Math.abs(layout.width - panel.width) < 1);
     const gameWidth = await frame.locator('.lexicalis').evaluate(node => node.getBoundingClientRect().width);
     assert.ok(Math.abs(gameWidth - viewport.width) < 1);
   }

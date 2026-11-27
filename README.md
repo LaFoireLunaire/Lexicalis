@@ -93,6 +93,8 @@ Ce cache est facultatif : refus du stockage, quota insuffisant ou suppression pa
 
 ## Lisibilité et retour des propositions
 
+Le jeu utilise un panneau unique : le bouton « Obtenir un indice » est placé près des compteurs, au-dessus de la saisie. Le panneau latéral et le texte d’accueil de la liste vide ont été retirés. En cours de partie, le bouton du haut propose « Abandonner la partie », avec confirmation ; après une victoire ou un abandon, il est remplacé par « Nouvelle partie ». Sur mobile, les nombres des compteurs mesurent 20 px et leurs libellés 13 px, contre 28 px et 16 px sur ordinateur.
+
 Le tableau utilise une police de 16 px sur ordinateur et 15 px sur mobile, avec des en-têtes abrégés sur les petits écrans. Ses lignes ont 8 px de marge intérieure verticale. Sous le champ, la dernière proposition acceptée est affichée sur **une seule ligne identique à celle de la liste**, avec les mêmes colonnes : numéro, mot, température et progression, ou un tiret hors du top 1 000. Les indices y portent la même marque que dans la liste.
 
 La liste est toujours classée du plus chaud au plus froid ; le choix de tri et le titre « Vos explorations » ont été retirés. Les anciennes préférences de tri sont ignorées, sans perdre la partie sauvegardée. Une nouvelle proposition conserve la position de défilement ; une nouvelle partie la remet en haut. Pour un nouveau mot du top 1 000, seules ses barres se remplissent en 650 ms. La reprise n’anime pas les anciennes barres et la préférence de réduction des mouvements est respectée.
