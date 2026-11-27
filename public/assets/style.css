@@ -717,8 +717,13 @@ dialog::backdrop {
   font:40px/1.1 Georgia,"Times New Roman",serif;
   letter-spacing:-1.5px;
 }
-.game-title>span {
-  color:var(--gold);
+.game-logo {
+  display:block;
+  width:150px;
+  max-width:100%;
+  height:auto;
+  aspect-ratio:2048 / 683;
+  object-fit:contain;
 }
 main {
   display:flex;
@@ -742,6 +747,9 @@ main {
   }
   .game-title {
     font-size:32px;
+  }
+  .game-logo {
+    width:120px;
   }
   main {
     padding-top:16px;
