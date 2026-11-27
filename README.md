@@ -131,7 +131,7 @@ Consulter [l’état des validations et les limites](docs/validation.md). Le tes
 
 ## Publier et intégrer à Blogger
 
-La préparation GitHub Pages et le bloc Blogger sont disponibles : suivre [le guide de mise en ligne](docs/deploiement.md). Le workflow est manuel et les vecteurs sont générés dans un artefact, sans ajouter les données volumineuses à Git. Une archive autonome est produite par `npm run build:site` et vérifiée par `npm run test:release`.
+La préparation GitHub Pages et le bloc Blogger sont disponibles : suivre [le guide de mise en ligne](docs/deploiement.md). Chaque mise à jour de `main` déclenche automatiquement les vérifications, la construction et la publication ; une relance manuelle reste disponible dans Actions. Les autres branches ne publient pas le site. Les vecteurs sont générés dans un artefact, sans ajouter les données volumineuses à Git. Une archive autonome est produite par `npm run build:site` et vérifiée par `npm run test:release`.
 
 Le logo de l’en-tête est chargé depuis l’URL PNG Blogger fournie par le propriétaire, déclarée dans `public/index.html`. Il mesure 150 px de large sur ordinateur et 120 px sur mobile, avec ses proportions conservées. Cette image reste hébergée sur Blogger.
 

@@ -2,11 +2,11 @@
 
 La préparation locale est terminée. Le propriétaire a choisi un **code public sur GitHub**. La cible proposée est GitHub Pages pour le dépôt `LaFoireLunaire/Lexicalis`.
 
-**URL prévue après activation et déploiement réussi :** `https://lafoirelunaire.github.io/Lexicalis/`. Cette adresse n’est pas annoncée comme déjà en ligne.
+**Adresse du jeu :** `https://lafoirelunaire.github.io/Lexicalis/`.
 
 ## Ce qui est prêt
 
-- `.github/workflows/pages.yml` prépare les vraies données puis publie le site **uniquement lorsque l’on lance le workflow manuellement**.
+- `.github/workflows/pages.yml` prépare les vraies données puis publie le site **automatiquement à chaque mise à jour de `main`**. Une relance manuelle reste disponible.
 - `dist/release/lexicalis-site.zip` contient le site autonome complet et ses vraies données ; `lexicalis-site.zip.sha256` permet de contrôler son téléchargement.
 - `docs/blogger.html` et `dist/release/blogger.html` contiennent le bloc à coller dans Blogger.
 - `dist/release/release.json` décrit les fichiers, leurs empreintes et l’identifiant du jeu exporté.
@@ -17,7 +17,7 @@ L’archive ne contient ni le modèle original de 2 Go, ni dépendances de déve
 
 Les fichiers du projet, dont `.github/workflows/pages.yml`, doivent être présents sur la branche par défaut du dépôt, habituellement `main`. La préparation d’un environnement Codex et la présence des fichiers dans son snapshot ne suffisent pas à les envoyer dans le dépôt distant.
 
-Si une branche de préparation vous est fournie, ouvrez sa comparaison avec `main`, créez puis fusionnez la pull request après revue. Le site ne se déploie pas sur un simple push : le workflow est volontairement manuel.
+Si une branche de préparation vous est fournie, ouvrez sa comparaison avec `main`, créez puis fusionnez la pull request après revue. La fusion dans `main` déclenche la publication automatiquement. Un push sur une autre branche ne publie pas le site.
 
 Dans les paramètres du dépôt, vérifiez sa visibilité. Pour utiliser GitHub Pages gratuitement avec le choix retenu, le dépôt doit être **Public**, ou disposer d’un forfait autorisant Pages sur un dépôt privé. Le propriétaire a accepté le code public ; le script de préparation ne modifie pas lui-même la visibilité du dépôt.
 
@@ -27,12 +27,14 @@ Dans `LaFoireLunaire/Lexicalis` :
 
 1. Ouvrir **Settings → Pages**.
 2. Dans **Build and deployment**, choisir **Source → GitHub Actions**.
-3. Ouvrir **Actions → Publier Lexicalis sur GitHub Pages**.
-4. Cliquer sur **Run workflow**, sélectionner la branche `main`, puis lancer.
+3. Intégrer le workflow dans `main`, par exemple en fusionnant la pull request de préparation. Cette mise à jour déclenche la première publication automatique.
+4. Ouvrir **Actions → Publier Lexicalis sur GitHub Pages** pour suivre l’exécution déclenchée par le push.
 5. Attendre la réussite des étapes `build` et `deploy`. Le premier téléchargement du modèle original peut prendre plusieurs minutes ; les sources sont ensuite mises en cache et revérifiées.
 6. Utiliser l’URL réellement affichée par le déploiement. L’URL prévue ci-dessus est correcte pour le nom de dépôt actuel, sans domaine personnalisé.
 
 Le workflow utilise les droits temporaires intégrés de GitHub Actions. Aucun token personnel, clé d’IA ou secret à copier dans le code n’est nécessaire. Les Actions officielles sont épinglées sur des commits vérifiés. Les permissions de publication Pages sont limitées au job `deploy`.
+
+Pour relancer une publication sans nouveau commit, ouvrir **Actions → Publier Lexicalis sur GitHub Pages → Run workflow**, sélectionner **`main`**, puis lancer. Une relance depuis une autre branche est ignorée. Le job de publication attend la réussite de la construction et des tests ; un échec conserve le site précédemment publié. Les exécutions sont sérialisées pour éviter deux déploiements simultanés.
 
 ### Pourquoi les données ne sont pas ajoutées au dépôt
 
@@ -61,7 +63,7 @@ Le bloc actuel affiche le jeu sur **toute la fenêtre**, avec une hauteur qui su
 
 **Pour mettre à jour une page existante**, remplacer intégralement l’ancien bloc iframe par le contenu complet de `docs/blogger.html` : il contient le style, l’iframe et le script nécessaires. Coller ce bloc uniquement dans la page Lexicalis, en mode HTML. Le thème et les gadgets globaux du blog ne sont pas à modifier. Les autres pages gardent leur présentation habituelle.
 
-Les changements de l’interface doivent aussi être déployés sur GitHub Pages : fusionner la branche de mise à jour dans `main`, puis relancer le workflow manuel. Le bloc Blogger peut conserver la même URL du jeu. Le nouveau rendu sur votre vrai thème reste à vérifier après remplacement du bloc.
+Les changements de l’interface doivent aussi être déployés sur GitHub Pages : fusionner la branche de mise à jour dans `main` déclenche désormais le workflow automatiquement. Il reste à vérifier sa réussite dans Actions. Le bloc Blogger peut conserver la même URL du jeu. Le nouveau rendu sur votre vrai thème reste à vérifier après remplacement du bloc.
 
 ## Autre hébergement statique
 
@@ -82,4 +84,4 @@ Le constructeur refuse d’écraser une sortie existante afin de préserver vos 
 
 Le test vérifie le ZIP et toutes les empreintes, l’extrait sous `/Lexicalis/`, joue avec les vraies données sur ordinateur et mobile émulé, puis teste le bloc Blogger réellement généré depuis un autre site local, avec une colonne étroite transformée et des styles parents incompatibles. Il vérifie la reprise et l’absence de nouvelle requête de vecteurs après actualisation, y compris dans cette iframe. Le remplissage exact de la fenêtre est vérifié en 320 × 700, 390 × 844 et 1 440 × 900 pixels, ainsi que les éléments supprimés de l’interface. Il arrête ses serveurs temporaires et laisse les rapports dans `test-results/`.
 
-La syntaxe du workflow a été validée avec Actionlint 1.7.7, dont le binaire a été contrôlé contre les SHA-256 de sa release officielle. Les étapes Python du workflow correspondent à la chaîne de préparation déjà exécutée sur les vraies données ; le workflow lui-même n’a pas encore été lancé sur GitHub.
+La syntaxe du workflow a été validée avec Actionlint 1.7.7, dont le binaire a été contrôlé contre les SHA-256 de sa release officielle. Les étapes Python correspondent à la chaîne de préparation déjà exécutée sur les vraies données. Le workflow a déjà réussi sur GitHub en mode manuel ; suivre la première publication automatique dans Actions pour confirmer le nouveau déclenchement.
