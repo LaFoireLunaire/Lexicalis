@@ -272,6 +272,11 @@ try {
   assert.ok(calmFill.scale > 0.99); checks++;
   await calm.close();
 
+  await page.evaluate(() => new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase('lexicalis-vector-cache');
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  }));
   mode = 'corrupt';
   await page.reload();
   await page.locator('#retry-button').waitFor();

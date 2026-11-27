@@ -37,6 +37,13 @@ try {
     }, { schemaVersion: 1, dataId: manifest.id, target, entries: [], outcome: 'playing' });
     const page = await context.newPage();
     const errors = [];
+    const manifestUrl = new URL('data/manifest.json', url).href;
+    const assetUrls = new Set(Object.values(manifest.files).map(record => new URL(record.url, manifestUrl).href));
+    const requests = { assets: 0, manifests: 0 };
+    page.on('request', request => {
+      if (assetUrls.has(request.url())) requests.assets++;
+      if (request.url() === manifestUrl) requests.manifests++;
+    });
     page.on('pageerror', error => errors.push(error.message));
     if (mode === 'mobile-emulated') {
       const cdp = await context.newCDPSession(page);
@@ -46,6 +53,8 @@ try {
     await page.goto(url);
     await page.locator('#word-input:enabled').waitFor({ timeout: 180000 });
     const loadMs = performance.now() - started;
+    const dataFetchesFirstLoad = requests.assets;
+    assert.equal(dataFetchesFirstLoad, 3);
     assert.equal(await page.locator('#attempts').innerText(), '0');
     const sample = ['ordinateur', 'avatar', 'univers', 'jeu'].filter(word => words.includes(word) && word !== answer);
     let lastGuessMs;
@@ -65,8 +74,15 @@ try {
     const displayedScores = await page.locator('#guesses tr').allTextContents();
     await page.screenshot({ path: path.join(root, `test-results/real-${mode}.png`), fullPage: true });
     const initialTiming = await page.evaluate(() => window.testTicks);
+    const assetsBeforeReload = requests.assets;
+    const manifestsBeforeReload = requests.manifests;
+    const reloadStarted = performance.now();
     await page.reload();
     await page.locator('#word-input:enabled').waitFor({ timeout: 180000 });
+    const reloadMs = performance.now() - reloadStarted;
+    const dataFetchesOnReload = requests.assets - assetsBeforeReload;
+    assert.equal(dataFetchesOnReload, 0);
+    assert.equal(requests.manifests - manifestsBeforeReload, 1);
     assert.equal(await page.locator('#attempts').innerText(), String(sample.length));
     assert.equal(await page.locator('#last-guess-word').innerText(), sample.at(-1));
     await page.locator('#word-input').fill(answer);
@@ -78,7 +94,10 @@ try {
     assert.equal(await page.locator('#guesses tr:first-child .temperature').innerText(), '100,00 °C');
     const timing = await page.evaluate(() => window.testTicks);
     assert.deepEqual(errors, []);
-    results.push({ mode, loadMs: Math.round(loadMs), lastGuessRoundTripMs: Math.round(lastGuessMs),
+    results.push({ mode, loadMs: Math.round(loadMs), reloadMs: Math.round(reloadMs),
+      dataFetchesFirstLoad, dataFetchesOnReload, manifestRechecked: true,
+      vectorBytesNotFetchedOnReload: manifest.files.vectors.bytes,
+      lastGuessRoundTripMs: Math.round(lastGuessMs),
       mainThreadIntervalMaxMs: Math.round(Math.max(initialTiming.longest, timing.longest)),
       mainThreadTicks: initialTiming.ticks + timing.ticks,
       displayedScores, lastGuessDetailsMatchTable: true, restored: true, won: true, neighbors: 1000, horizontalOverflow: false,

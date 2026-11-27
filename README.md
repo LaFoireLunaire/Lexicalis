@@ -73,7 +73,7 @@ Ne pas considérer un hash calculé uniquement sur le téléchargement comme une
 - Les mystères sont choisis **séparément** parmi les lemmes NOM/VER/ADJ/ADV de 4 à 16 lettres dont `freqlemfilms2 >= 5`. Le script exige par défaut au moins 2 000 mystères et 1 000 mots jouables ; il échoue au lieu d’abaisser silencieusement les seuils. Les nombres effectifs ne seront connus qu’après export du modèle réel.
 - Pour une curation manuelle, `--targets liste.txt` remplace Lexique comme source des mystères et conserve le vocabulaire du modèle passant le seul filtre orthographique. Cette variante nécessite une révision des noms propres/artefacts et des droits sur la liste. Elle ne prétend pas utiliser Lexique.
 - Chaque vecteur est normalisé avec une norme Float64, puis stocké en Float32 little endian. `manifest.json` référence les fichiers binaires/JSON nommés par hash, leur taille, leur SHA-256, les sources et les transformations. Publier les assets **avant** le manifeste.
-- Le navigateur vérifie tous les hashes, la taille, les 500 dimensions, les index et les normes avant d’activer le jeu. Les noms de fichier par hash permettent le cache HTTP ; le manifeste est revalidé. Aucun cache IndexedDB ni aucune quantification n’est introduit dans cette version.
+- Le navigateur vérifie les hashes, la taille, les 500 dimensions, les index et les normes avant la première utilisation des données. Une copie validée est conservée dans IndexedDB pour les ouvertures suivantes ; ses hashes sont à nouveau vérifiés à chaque lecture. Les vecteurs restent en Float32, sans quantification.
 
 ## Moteur et sauvegarde
 
@@ -81,7 +81,15 @@ Ne pas considérer un hash calculé uniquement sur le téléchargement comme une
 
 Le tirage aléatoire utilise `crypto.getRandomValues` avec rejet pour éviter le biais du modulo. Les propositions inconnues et déjà découvertes ne comptent pas. Un indice dévoile un voisin inédit, avec un rang visé progressivement plus proche, jusqu’au rang 999 ; une fois ce rang découvert, les indices restants ne peuvent plus l’améliorer. Ils ne dévoilent jamais le mystère et ne comptent pas comme essais.
 
-`localStorage` conserve l’identifiant des données, le mystère, les entrées, l’issue et le tri. Les scores sont recalculés à la reprise ; une version incompatible ou une sauvegarde invalide provoque une nouvelle partie expliquée. Si le stockage est refusé, la partie reste jouable avec un avertissement. En iframe, sa disponibilité dépend du navigateur et de ses règles de stockage tiers. Le mystère est présent côté client : ce jeu sans compte n’a pas de protection anti-triche.
+`localStorage` conserve l’identifiant des données, le mystère, les entrées et l’issue. Les scores sont recalculés à la reprise ; une version incompatible ou une sauvegarde invalide provoque une nouvelle partie expliquée. Si le stockage est refusé, la partie reste jouable avec un avertissement. En iframe, sa disponibilité dépend du navigateur et de ses règles de stockage tiers. Le mystère est présent côté client : ce jeu sans compte n’a pas de protection anti-triche.
+
+## Chargement et cache local
+
+Au premier chargement, le Worker télécharge et valide les trois ressources du dictionnaire, puis enregistre une copie dans IndexedDB sous forme de Blobs. Lors d’une actualisation, il recontrôle le petit manifeste sur le serveur et réutilise cette copie si la version est identique : les **116,52 Mio de vecteurs** ne sont plus redemandés au réseau. Le cache est indépendant du cache HTTP.
+
+L’identité du cache inclut l’URL du manifeste, l’identifiant du jeu, son format, les tailles et les SHA-256 des ressources, ainsi que la version du validateur. Chaque lecture locale contrôle à nouveau les tailles, les hashes et la structure des listes. Le parcours complet des normes est réutilisé uniquement pour les octets identiques déjà validés. Une mise à jour remplace atomiquement la copie précédente ; une copie endommagée est retéléchargée et validée intégralement. Les calculs de scores et de rangs restent inchangés.
+
+Ce cache est facultatif : refus du stockage, quota insuffisant ou suppression par le navigateur entraînent un chargement réseau normal. Il dépend du navigateur et du contexte de l’iframe ; une ouverture directe du jeu peut utiliser un autre espace de stockage que l’intégration Blogger. Le manifeste reste consulté en ligne à chaque ouverture. Voir les [mesures et contrôles du cache](docs/validation.md#cache-après-actualisation-27-novembre-2026).
 
 ## Lisibilité et retour des propositions
 
@@ -97,11 +105,12 @@ Le bloc de messages `#feedback` et la boussole ont été retirés. Les mots inco
 npm test
 npm run test:python
 npm run test:browser
+npm run test:cache
 ```
 
 Pour les tests navigateur, installer Chromium ou fournir `CHROMIUM_PATH=/chemin/vers/chromium`. Dans l’environnement cloud actuel, il est présent à `/usr/bin/chromium`. Sur une autre machine, les navigateurs Playwright peuvent être installés selon sa documentation, puis leur chemin passé dans cette variable.
 
-Les trois commandes ci-dessus utilisent des **vecteurs mathématiques synthétiques exclusivement dans les tests**, jamais dans le jeu. Le test navigateur démarre et arrête son serveur temporaire. Il vérifie le Worker, les hashes, les erreurs de chargement, les saisies, les indices, la sauvegarde/reprise, la victoire, l’abandon confirmé, le tri, les largeurs 320/360/390/768/1024 px, une émulation Pixel 7, le stockage indisponible et un manifeste externe avec CORS. Rapports et captures : `test-results/`.
+Les commandes ci-dessus utilisent des **vecteurs mathématiques synthétiques exclusivement dans les tests**, jamais dans le jeu. Les tests navigateur démarrent et arrêtent leur serveur temporaire. Ils vérifient le Worker, les hashes, les erreurs de chargement, les saisies, les indices, la sauvegarde/reprise, la victoire, l’abandon confirmé, le classement fixe, les largeurs 320/360/390/768/1024 px, une émulation Pixel 7, le stockage indisponible et un manifeste externe avec CORS. Le test de cache emploie le véritable IndexedDB dans le Worker, avec le cache HTTP désactivé : actualisation sans requête de données, corruption, nouvelles versions, refus de stockage et quota insuffisant. Rapports et captures : `test-results/`.
 
 Avec les vraies données exportées :
 

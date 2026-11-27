@@ -10,7 +10,8 @@
     "test:browser": "node scripts/browser-test.mjs",
     "test:real": "node scripts/smoke-real-data.mjs",
     "build:site": "python3 scripts/build_site.py",
-    "test:release": "node scripts/test-release.mjs"
+    "test:release": "node scripts/test-release.mjs",
+    "test:cache": "node scripts/test-data-cache.mjs"
   },
   "devDependencies": {
     "playwright": "1.58.2"

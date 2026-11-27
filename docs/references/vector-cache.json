@@ -1,0 +1,139 @@
+{
+  "recordedAt": "2026-11-27T08:57:43.911881+00:00",
+  "implementation": {
+    "storage": "IndexedDB, Blobs, atomic replacement per manifest URL",
+    "manifestRevalidatedOnEveryLoad": true,
+    "sha256CheckedOnEveryAssetRead": true,
+    "fullNormalizationCheckBeforeCacheWrite": true,
+    "cachedNormValidationReusedOnlyForIdenticalHashesAndValidatorVersion": true,
+    "vectorsUnchanged": "500 dimensions, Float32 little endian",
+    "optionalStorageFailuresFallBackToNetwork": true,
+    "sourceSha256": {
+      "public/assets/cache.js": "6b0438bc8939374c21fb48ee53970bacc6a8bbcf9cdc9d1f87ef93e277e0e6c1",
+      "public/assets/data.js": "723994426596407c12283f6dc3661d6894d36d1cf192189173afaefb6f8a6f76"
+    }
+  },
+  "cacheChecks": {
+    "checks": 10,
+    "cases": [
+      "Premier chargement : trois ressources téléchargées et cache validé écrit",
+      "Actualisation : manifeste recontrôlé, zéro requête de données, partie et score repris",
+      "Cache corrompu : SHA-256 détecté, ressources retéléchargées puis cache réparé",
+      "Nouvelle version : données remplacées et ancienne partie invalidée",
+      "Empreinte modifiée avec même identifiant : aucune réutilisation de données périmées",
+      "Version de validation obsolète : nouvelle validation complète",
+      "IndexedDB refusé dans le Worker : deux chargements réseau jouables",
+      "Quota insuffisant : écriture refusée, jeu utilisable et aucune entrée partielle",
+      "Réseau corrompu : jeu bloqué, cache vide, reprise après ressource corrigée",
+      "Vecteur non normalisé avec SHA-256 valide : refusé avant toute mise en cache"
+    ],
+    "fixtureOnly": true,
+    "httpCache": "no-store",
+    "indexedDB": "natif",
+    "execution": "Dedicated Web Workers Chromium",
+    "browser": "156.0.8078.79"
+  },
+  "interfaceChecks": {
+    "checks": 34,
+    "fixtureOnly": true,
+    "fixtureWords": 1005,
+    "fixtureDimensions": 500,
+    "fixtureLoadMs": 191,
+    "browser": "156.0.8078.79",
+    "note": "Fixtures synthétiques uniquement ; aucune mesure du modèle réel ou d’un appareil Android physique."
+  },
+  "realData": {
+    "dataId": "972a8d09039d8c3879abe870",
+    "realData": true,
+    "words": 61091,
+    "mysteries": 5006,
+    "dimensions": 500,
+    "vectorMiB": 116.52183532714844,
+    "sourceSha256": "8ec240bf8270138f5bb29232cf93e3f44060a42cacec57b702dbe2dbf67d7976",
+    "controlledTarget": "abandonner",
+    "browser": "156.0.8078.79",
+    "results": [
+      {
+        "mode": "desktop",
+        "loadMs": 2117,
+        "reloadMs": 846,
+        "dataFetchesFirstLoad": 3,
+        "dataFetchesOnReload": 0,
+        "manifestRechecked": true,
+        "vectorBytesNotFetchedOnReload": 122182000,
+        "lastGuessRoundTripMs": 66,
+        "mainThreadIntervalMaxMs": 133,
+        "mainThreadTicks": 168,
+        "displayedScores": [
+          "3univers6,25 °C—",
+          "4jeu2,98 °C—",
+          "1ordinateur-0,84 °C—",
+          "2avatar-1,16 °C—"
+        ],
+        "lastGuessDetailsMatchTable": true,
+        "restored": true,
+        "won": true,
+        "neighbors": 1000,
+        "horizontalOverflow": false,
+        "cpuSlowdown": 1
+      },
+      {
+        "mode": "mobile-emulated",
+        "loadMs": 1856,
+        "reloadMs": 985,
+        "dataFetchesFirstLoad": 3,
+        "dataFetchesOnReload": 0,
+        "manifestRechecked": true,
+        "vectorBytesNotFetchedOnReload": 122182000,
+        "lastGuessRoundTripMs": 127,
+        "mainThreadIntervalMaxMs": 226,
+        "mainThreadTicks": 164,
+        "displayedScores": [
+          "3univers6,25 °C—",
+          "4jeu2,98 °C—",
+          "1ordinateur-0,84 °C—",
+          "2avatar-1,16 °C—"
+        ],
+        "lastGuessDetailsMatchTable": true,
+        "restored": true,
+        "won": true,
+        "neighbors": 1000,
+        "horizontalOverflow": false,
+        "cpuSlowdown": 4
+      }
+    ],
+    "limitation": "Serveur local sur ordinateur cloud. Le mode mobile est une émulation Chromium avec CPU ralenti, pas un appareil Android physique ni un débit Internet réel."
+  },
+  "packagedIframe": {
+    "archiveIntegrity": true,
+    "allInventoryHashesValid": true,
+    "projectSubpath": "/Lexicalis/",
+    "realDataDesktopAndMobile": true,
+    "separateOriginIframe": true,
+    "parentStylesIsolated": true,
+    "iframeGuessAccepted": true,
+    "iframeCrossSite": true,
+    "iframeCacheReload": true,
+    "iframeDataFetchesOnReload": 0,
+    "iframeManifestRechecked": true,
+    "horizontalOverflow": false,
+    "fullViewportIframe": true,
+    "themeColumnEscaped": true,
+    "compactHeaderAndRequestedRemovals": true,
+    "limit": "Test local du paquet et d’une iframe simulée ; le rendu du nouveau bloc sur le vrai thème Blogger reste à vérifier après remplacement."
+  },
+  "iframeBrowserConfiguration": "Chromium standard feature defaults restored (--disable-features=); Playwright otherwise disables ThirdPartyStoragePartitioning.",
+  "reproduction": [
+    "npm run test:cache",
+    "npm run test:browser",
+    "python scripts/build_site.py --output dist/vector-cache-blob",
+    "node scripts/test-release.mjs dist/vector-cache-blob"
+  ],
+  "limits": [
+    "Local cloud Chromium measurements, not Internet download timings or a physical Android device.",
+    "First load still fetches all data and creates the optional cache.",
+    "Storage availability and retention depend on the browser and iframe context.",
+    "A current manifest must still be fetched online; no offline application guarantee.",
+    "No publication to GitHub Pages or Blogger performed by these local checks."
+  ]
+}

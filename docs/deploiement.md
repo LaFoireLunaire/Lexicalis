@@ -38,13 +38,13 @@ Le workflow utilise les droits temporaires intégrés de GitHub Actions. Aucun t
 
 Le binaire web fait **116,52 Mio**, au-dessus de la limite habituelle de 100 Mio par fichier dans GitHub. Le workflow le génère pendant la construction, puis envoie **un artefact Pages**, et non un commit de données. Le site publié fait environ 123 Mo, sous la limite de 1 Go de GitHub Pages.
 
-GitHub Pages documente aussi une limite souple de bande passante de 100 Go/mois : ce volume correspond à environ 800 téléchargements complets du dictionnaire actuel. Les nombreuses parties jouées après un chargement n’entraînent pas de nouveau téléchargement des vecteurs. Pour un trafic important, prévoir un hébergement de données adapté ; ne pas promettre une capacité de trafic illimitée.
+GitHub Pages documente aussi une limite souple de bande passante de 100 Go/mois : ce volume correspond à environ 800 téléchargements complets du dictionnaire actuel. Les nombreuses parties jouées après un chargement n’entraînent pas de nouveau téléchargement des vecteurs. Le cache IndexedDB conserve aussi les données pour les actualisations suivantes, tant que le navigateur l’autorise et que la version ne change pas. Pour un trafic important, prévoir un hébergement de données adapté ; ne pas promettre une capacité de trafic illimitée.
 
 Sources officielles consultées : [limites GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits), [artefact Pages](https://github.com/actions/upload-pages-artifact). Le binaire original de 2 Go est seulement une entrée de préparation, jamais un fichier du site.
 
 ## 3. Vérifier le site déployé
 
-Ouvrir le lien de déploiement en HTTPS, attendre le dictionnaire, proposer un mot puis actualiser la page pour vérifier la reprise. Vérifier sur un téléphone Android physique la saisie, le téléchargement et l’absence de dépassement horizontal.
+Ouvrir le lien de déploiement en HTTPS, attendre le dictionnaire, proposer un mot puis actualiser la page pour vérifier la reprise et la lecture du cache local. Seul le manifeste doit être redemandé parmi les fichiers de données si le cache est disponible. Vérifier aussi dans la page Blogger, puis sur un téléphone Android physique la saisie, le téléchargement et l’absence de dépassement horizontal. Le premier chargement de cette version crée le cache automatiquement ; le bloc Blogger existant peut garder la même URL.
 
 Toutes les ressources du paquet utilisent des chemins relatifs compatibles avec `/Lexicalis/`. L’application, le Worker et les données sont servis depuis la même origine : aucune configuration CORS supplémentaire n’est nécessaire dans ce cas. Pour un hébergement de données externe, consulter les réglages de `public/config.js` dans le README.
 
@@ -80,6 +80,6 @@ npm run test:release
 
 Le constructeur refuse d’écraser une sortie existante afin de préserver vos fichiers. Pour une nouvelle version, utiliser par exemple `--output dist/release-v2`, puis `node scripts/test-release.mjs dist/release-v2`.
 
-Le test vérifie le ZIP et toutes les empreintes, l’extrait sous `/Lexicalis/`, joue avec les vraies données sur ordinateur et mobile émulé, puis teste le bloc Blogger réellement généré depuis une autre origine, avec une colonne étroite transformée et des styles parents incompatibles. Le remplissage exact de la fenêtre est vérifié en 320 × 700, 390 × 844 et 1 440 × 900 pixels, ainsi que les éléments supprimés de l’interface. Il arrête ses serveurs temporaires et laisse les rapports dans `test-results/`.
+Le test vérifie le ZIP et toutes les empreintes, l’extrait sous `/Lexicalis/`, joue avec les vraies données sur ordinateur et mobile émulé, puis teste le bloc Blogger réellement généré depuis un autre site local, avec une colonne étroite transformée et des styles parents incompatibles. Il vérifie la reprise et l’absence de nouvelle requête de vecteurs après actualisation, y compris dans cette iframe. Le remplissage exact de la fenêtre est vérifié en 320 × 700, 390 × 844 et 1 440 × 900 pixels, ainsi que les éléments supprimés de l’interface. Il arrête ses serveurs temporaires et laisse les rapports dans `test-results/`.
 
 La syntaxe du workflow a été validée avec Actionlint 1.7.7, dont le binaire a été contrôlé contre les SHA-256 de sa release officielle. Les étapes Python du workflow correspondent à la chaîne de préparation déjà exécutée sur les vraies données ; le workflow lui-même n’a pas encore été lancé sur GitHub.

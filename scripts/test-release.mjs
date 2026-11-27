@@ -64,6 +64,9 @@ print('Archive : CRC, SHA-256 et inventaire vérifiés ; extraction sous /Lexica
   await copyFile(path.join(root, 'test-results/real-browser.json'), path.join(root, 'test-results/release-browser.json'));
 
   const releaseInfo = JSON.parse(await readFile(path.join(release, 'release.json'), 'utf8'));
+  const dataManifest = JSON.parse(await readFile(path.join(temp, 'Lexicalis/data/manifest.json'), 'utf8'));
+  const manifestUrl = new URL('data/manifest.json', appUrl).href;
+  const assetUrls = new Set(Object.values(dataManifest.files).map(record => new URL(record.url, manifestUrl).href));
   const embed = (await readFile(path.join(release, 'blogger.html'), 'utf8')).replace(releaseInfo.siteUrl, appUrl);
   blogServer = createServer((req, res) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -74,20 +77,38 @@ print('Archive : CRC, SHA-256 et inventaire vérifiés ; extraction sous /Lexica
       </style><header>En-tête du blog</header><main class="blog-column"><h1>Titre Blogger</h1>${embed}</main><aside>Colonne du blog</aside></html>`);
   });
   await new Promise(resolve => blogServer.listen(0, '127.0.0.1', resolve));
-  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', headless: true });
+  // Restore Chromium's feature defaults: Playwright disables third-party storage
+  // partitioning by default, which prevents IndexedDB in a cross-site iframe.
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
+    headless: true, args: ['--disable-features='] });
   const context = await browser.newContext({ ...devices['Pixel 7'] });
   const page = await context.newPage();
   const errors = [];
+  const requests = { manifests: 0, assets: 0 };
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto(`http://127.0.0.1:${blogServer.address().port}/`);
+  page.on('request', request => {
+    if (request.url() === manifestUrl) requests.manifests++;
+    if (assetUrls.has(request.url())) requests.assets++;
+  });
+  // A different hostname also exercises the browser's third-party storage rules.
+  await page.goto(`http://localhost:${blogServer.address().port}/`);
   const frame = page.frameLocator('iframe');
   await frame.locator('#word-input:enabled').waitFor({ timeout: 180000 });
+  assert.equal(requests.assets, 3);
   assert.equal(await frame.locator('#guesses-table').evaluate(node => getComputedStyle(node).display), 'table');
   assert.ok(await frame.locator('html').evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   await frame.locator('#word-input').fill('ordinateur');
   await frame.locator('#guess-button').click();
   await frame.locator('#guesses tr').waitFor();
   assert.equal(await frame.locator('#attempts').innerText(), '1');
+  const lastTemperature = await frame.locator('#last-guess-temperature').innerText();
+  const beforeReload = { ...requests };
+  await page.reload();
+  await frame.locator('#word-input:enabled').waitFor({ timeout: 180000 });
+  assert.equal(requests.assets - beforeReload.assets, 0);
+  assert.equal(requests.manifests - beforeReload.manifests, 1);
+  assert.equal(await frame.locator('#attempts').innerText(), '1');
+  assert.equal(await frame.locator('#last-guess-temperature').innerText(), lastTemperature);
   assert.equal(await page.locator('#lexicalis-blogger-frame').evaluate(node => node.parentNode === document.body), true);
   for (const viewport of [{ width: 320, height: 700 }, { width: 390, height: 844 }, { width: 1440, height: 900 }]) {
     await page.setViewportSize(viewport);
@@ -110,7 +131,9 @@ print('Archive : CRC, SHA-256 et inventaire vérifiés ; extraction sous /Lexica
   await page.screenshot({ path: path.join(root, 'test-results/release-blogger.png'), fullPage: true });
   const report = { archiveIntegrity: true, allInventoryHashesValid: true, projectSubpath: '/Lexicalis/',
     realDataDesktopAndMobile: true, separateOriginIframe: true, parentStylesIsolated: true,
-    iframeGuessAccepted: true, horizontalOverflow: false, fullViewportIframe: true,
+    iframeGuessAccepted: true, iframeCrossSite: true, iframeCacheReload: true,
+    iframeDataFetchesOnReload: 0, iframeManifestRechecked: true,
+    horizontalOverflow: false, fullViewportIframe: true,
     themeColumnEscaped: true, compactHeaderAndRequestedRemovals: true,
     limit: 'Test local du paquet et d’une iframe simulée ; le rendu du nouveau bloc sur le vrai thème Blogger reste à vérifier après remplacement.' };
   await writeFile(path.join(root, 'test-results/release.json'), JSON.stringify(report, null, 2) + '\n');

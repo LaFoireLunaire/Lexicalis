@@ -71,6 +71,25 @@ Le test a aussi relevé un intervalle maximal de la boucle principale de 174 ms 
 
 Les scripts reproductibles sont `scripts/benchmark.mjs`, `scripts/smoke-real-data.mjs`, `scripts/compare_source_model.py` et `scripts/compare_temperatures.py`. Les rapports de référence sont conservés dans ce dossier ; les captures des tests sont dans `test-results/`.
 
+## Cache après actualisation (27 novembre 2026)
+
+Le chargeur conserve désormais les trois ressources validées dans IndexedDB. À l’ouverture suivante, il recontrôle le manifeste en ligne puis lit la copie locale si son identité correspond, en vérifiant encore ses tailles et SHA-256. Le contrôle complet des normes est réutilisé uniquement pour les mêmes octets déjà validés, avec la même version du validateur. Les vecteurs et les calculs restent inchangés.
+
+Le [rapport du cache](references/vector-cache.json) conserve les contrôles et les mesures du paquet réellement construit, avec les **61 091 vecteurs**. Les durées incluent l’activation du champ de saisie ; le premier chargement inclut aussi l’écriture du cache.
+
+| Parcours local | Premier chargement | Actualisation avec cache | Requêtes de données à l’actualisation |
+| --- | ---: | ---: | ---: |
+| Ordinateur Chromium | 2 117 ms | 846 ms | 0 |
+| Pixel 7 émulé, CPU ×4 | 1 856 ms | 985 ms | 0 |
+
+Dans les deux parcours, le manifeste est redemandé, les **122 182 000 octets de vecteurs** ne sont plus demandés au réseau, les quatre propositions sont restaurées et les températures sont conservées. La victoire et les 1 000 voisins passent toujours. Ces mesures sont indicatives, sur serveur local cloud ; elles ne représentent ni le débit Internet ni un téléphone physique.
+
+- **10 contrôles du cache** passent dans de vrais Workers Chromium avec IndexedDB natif et cache HTTP désactivé : premier chargement, reprise sans téléchargement, réparation après corruption, changement de version, changement de hash avec identifiant conservé, validateur obsolète, stockage refusé, quota insuffisant, ressource réseau corrompue et vecteur non normalisé malgré un SHA-256 valide.
+- **34 contrôles d’interface** passent toujours, sur fixtures synthétiques exclusivement.
+- Le paquet et toutes ses empreintes sont vérifiés. Son intégration dans une iframe sur un **autre site local** reprend la partie après actualisation, recontrôle le manifeste et ne demande aucune des trois ressources de données. Les styles isolés et le remplissage de la fenêtre sont aussi vérifiés.
+
+Commandes : `npm run test:cache`, `npm run test:browser`, puis construction du paquet et `node scripts/test-release.mjs CHEMIN_DU_PAQUET`. Le cache reste facultatif et peut être supprimé ou refusé par le navigateur, notamment en iframe ; le jeu revient alors au chargement réseau. Le premier téléchargement reste nécessaire et le manifeste continue d’être consulté en ligne.
+
 ## Restant à vérifier au déploiement
 
 - Un **appareil Android physique**, son clavier, la mémoire disponible, le débit réel et la fluidité.
