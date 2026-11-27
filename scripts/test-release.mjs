@@ -119,7 +119,7 @@ print('Archive : CRC, SHA-256 et inventaire vérifiés ; extraction sous /Lexica
     assert.equal(await frame.getByRole('heading', { name: 'Lexicalis', exact: true }).count(), 1);
     const logo = await frame.locator('.game-logo').boundingBox();
     assert.ok(Math.abs(logo.width - (viewport.width <= 680 ? 120 : 150)) < 1);
-    assert.ok(Math.abs(logo.width / logo.height - 2048 / 683) < 0.01);
+    assert.ok(Math.abs(logo.width / logo.height - 2170 / 725) < 0.01);
     assert.equal(await frame.locator('.brand, .introduction, .unlimited, .panel-foot, .privacy, .compass-card, .list-toolbar, #feedback, #sort').count(), 0);
     assert.equal(await frame.locator('.help-card h2').innerText(), 'Un petit coup de pouce ?');
     assert.equal(await frame.locator('.help-card p').innerText(), 'Un indice dévoile un mot voisin.');

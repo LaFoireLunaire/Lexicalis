@@ -133,7 +133,7 @@ Consulter [l’état des validations et les limites](docs/validation.md). Le tes
 
 La préparation GitHub Pages et le bloc Blogger sont disponibles : suivre [le guide de mise en ligne](docs/deploiement.md). Chaque mise à jour de `main` déclenche automatiquement les vérifications, la construction et la publication ; une relance manuelle reste disponible dans Actions. Les autres branches ne publient pas le site. Les vecteurs sont générés dans un artefact, sans ajouter les données volumineuses à Git. Une archive autonome est produite par `npm run build:site` et vérifiée par `npm run test:release`.
 
-Le logo de l’en-tête est chargé depuis l’URL PNG Blogger fournie par le propriétaire, déclarée dans `public/index.html`. Il mesure 150 px de large sur ordinateur et 120 px sur mobile, avec ses proportions conservées. Cette image reste hébergée sur Blogger.
+Le logo de l’en-tête est le PNG original fourni par le propriétaire, conservé dans `public/assets/lexicalis-logo-29cec92e.png` et inclus dans le site publié. Il mesure 150 px de large sur ordinateur et 120 px sur mobile, avec ses proportions conservées (2 170 × 725 pixels à l’origine).
 
 1. Préparer puis héberger le contenu complet de `public/` sur un hébergement statique **HTTPS**. Aucune compilation n’est nécessaire. Utiliser un hébergement adapté à la taille du binaire, à sa bande passante et à ses conditions de service.
 2. Même origine recommandée pour l’application et ses données. Pour des données sur un autre domaine, définir `window.LEXICALIS_CONFIG.manifestUrl` dans `public/config.js` et autoriser l’origine de **l’application** par CORS sur le manifeste **et tous les assets**. Configurer les types MIME JSON, JavaScript et binaire. HTTPS est nécessaire à Web Crypto en production.

@@ -722,7 +722,7 @@ dialog::backdrop {
   width:150px;
   max-width:100%;
   height:auto;
-  aspect-ratio:2048 / 683;
+  aspect-ratio:2170 / 725;
   object-fit:contain;
 }
 main {
