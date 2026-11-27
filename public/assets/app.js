@@ -142,7 +142,7 @@ function guessRow(entry, { latest = false, animate = false, summary = false } = 
 }
 
 function renderLastGuess(animatedSequence = null) {
-  const entry = current.entries.at(-1);
+  const entry = current.entries[current.lastSequence ?? current.entries.length - 1];
   $('last-guess').hidden = !entry;
   $('last-guess-row').replaceChildren(...(entry ? [guessRow(entry, {
     latest: true, animate: entry.sequence === animatedSequence, summary: true,
@@ -156,7 +156,7 @@ function renderTable({ animatedSequence = null, resetScroll = false } = {}) {
   entries.sort((a, b) => b.temperature - a.temperature || a.sequence - b.sequence);
   const fragment = document.createDocumentFragment();
   for (const entry of entries) fragment.append(guessRow(entry, {
-    latest: entry.sequence === current.entries.length - 1,
+    latest: entry.sequence === (current.lastSequence ?? current.entries.length - 1),
     animate: entry.sequence === animatedSequence,
   }));
   $('guesses').replaceChildren(fragment);
@@ -201,10 +201,11 @@ async function action(name, payload) {
   controls();
   try {
     const result = await call(name, payload);
+    const addedEntry = result.state.entries.length > current.entries.length;
     current = result.state;
     snapshot = result.snapshot;
     persist();
-    render({ animateLatest: name === 'guess' || name === 'hint', resetScroll: name === 'new' });
+    render({ animateLatest: addedEntry && (name === 'guess' || name === 'hint'), resetScroll: name === 'new' });
     showSaveWarning();
     if (name === 'new' || (name === 'guess' && $('word-input').value === payload.word)) $('word-input').value = '';
   } catch (error) {

@@ -32,6 +32,7 @@ export class Game {
 
   start(snapshot = null) {
     this.entries = [];
+    this.lastSequence = null;
     this.outcome = 'playing';
     const valid = this.validSnapshot(snapshot);
     this.target = valid ? snapshot.target : this.targets[randomIndex(this.targets.length, this.draw)];
@@ -54,6 +55,9 @@ export class Game {
     if (valid) {
       this.entries = snapshot.entries.map(entry => ({ ...entry }));
       this.outcome = snapshot.outcome;
+      this.lastSequence = Number.isInteger(snapshot.lastSequence) && snapshot.lastSequence >= 0 &&
+        snapshot.lastSequence < this.entries.length ? snapshot.lastSequence : this.entries.length - 1;
+      if (!this.entries.length) this.lastSequence = null;
     }
     return { restored: valid, reset: Boolean(snapshot && !valid), ...this.result() };
   }
@@ -84,8 +88,13 @@ export class Game {
     if (!word) throw new GameError('Écrivez un mot pour commencer.');
     const index = this.lookup.get(word);
     if (index === undefined) throw new GameError('Ce mot n’est pas dans le dictionnaire du jeu. Vérifiez les accents.');
-    if (this.entries.some(entry => entry.index === index)) throw new GameError('Ce mot a déjà été proposé.');
+    const existing = this.entries.findIndex(entry => entry.index === index);
+    if (existing !== -1) {
+      this.lastSequence = existing;
+      return this.result();
+    }
     this.entries.push({ index, kind: 'guess' });
+    this.lastSequence = this.entries.length - 1;
     if (index === this.target) this.outcome = 'won';
     return this.result();
   }
@@ -100,6 +109,7 @@ export class Game {
     if (!available.length) throw new GameError('Tous les indices ont déjà été découverts.');
     available.sort((a, b) => Math.abs(this.ranks[a] - desired) - Math.abs(this.ranks[b] - desired) || a - b);
     this.entries.push({ index: available[0], kind: 'hint' });
+    this.lastSequence = this.entries.length - 1;
     return this.result();
   }
 
@@ -120,12 +130,12 @@ export class Game {
       attempt: entry.kind === 'guess' ? ++attempt : null,
     }));
     return {
-      state: { outcome: this.outcome, entries, attempts: attempt,
+      state: { outcome: this.outcome, entries, lastSequence: this.lastSequence, attempts: attempt,
         hints: this.entries.length - attempt,
         answer: this.outcome === 'playing' ? null : this.words[this.target],
         neighbors: this.outcome === 'playing' ? [] : this.nearest.map(index => this.wordInfo(index)) },
       snapshot: { schemaVersion: 1, dataId: this.id, target: this.target,
-        entries: this.entries.map(entry => ({ ...entry })), outcome: this.outcome },
+        entries: this.entries.map(entry => ({ ...entry })), lastSequence: this.lastSequence, outcome: this.outcome },
     };
   }
 }

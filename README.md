@@ -81,7 +81,7 @@ Ne pas considérer un hash calculé uniquement sur le téléchargement comme une
 
 Le tirage aléatoire utilise `crypto.getRandomValues` avec rejet pour éviter le biais du modulo. Les propositions inconnues et déjà découvertes ne comptent pas. Un indice dévoile un voisin inédit, avec un rang visé progressivement plus proche, jusqu’au rang 999 ; une fois ce rang découvert, les indices restants ne peuvent plus l’améliorer. Ils ne dévoilent jamais le mystère et ne comptent pas comme essais.
 
-`localStorage` conserve l’identifiant des données, le mystère, les entrées et l’issue. Les scores sont recalculés à la reprise ; une version incompatible ou une sauvegarde invalide provoque une nouvelle partie expliquée. Si le stockage est refusé, la partie reste jouable avec un avertissement. En iframe, sa disponibilité dépend du navigateur et de ses règles de stockage tiers. Le mystère est présent côté client : ce jeu sans compte n’a pas de protection anti-triche.
+`localStorage` conserve l’identifiant des données, le mystère, les entrées, l’issue et la dernière ligne consultée. Les scores sont recalculés à la reprise ; une version incompatible ou une sauvegarde invalide provoque une nouvelle partie expliquée. Les anciennes sauvegardes restent compatibles et affichent par défaut leur dernière entrée. Si le stockage est refusé, la partie reste jouable avec un avertissement. En iframe, sa disponibilité dépend du navigateur et de ses règles de stockage tiers. Le mystère est présent côté client : ce jeu sans compte n’a pas de protection anti-triche.
 
 ## Chargement et cache local
 
@@ -97,7 +97,7 @@ Le tableau utilise une police de 16 px sur ordinateur et 15 px sur mobile, avec 
 
 La liste est toujours classée du plus chaud au plus froid ; le choix de tri et le titre « Vos explorations » ont été retirés. Les anciennes préférences de tri sont ignorées, sans perdre la partie sauvegardée. Une nouvelle proposition conserve la position de défilement ; une nouvelle partie la remet en haut. Pour un nouveau mot du top 1 000, seules ses barres se remplissent en 650 ms. La reprise n’anime pas les anciennes barres et la préférence de réduction des mouvements est respectée.
 
-Le bloc de messages `#feedback` et la boussole ont été retirés. Les mots inconnus et doublons sont signalés par la validation native du champ, sans compter d’essai ni remplacer le dernier mot valide. Le chargement apparaît dans le texte indicatif du champ ; en cas d’échec, un bouton permet de réessayer. La victoire affiche le mot et les nombres d’essais et d’indices.
+Le bloc de messages `#feedback` et la boussole ont été retirés. Les mots inconnus sont signalés par la validation native du champ, sans compter d’essai ni remplacer le dernier mot valide. Retaper un mot déjà découvert réaffiche sa ligne sous le champ, avec son numéro d’origine, sa température et sa progression ; les compteurs, l’ordre de la liste et le défilement sont conservés. La barre ne rejoue pas son animation pour un doublon. Les indices conservent leur marque et la ligne sélectionnée est retrouvée après actualisation. Le chargement apparaît dans le texte indicatif du champ ; en cas d’échec, un bouton permet de réessayer. La victoire affiche le mot et les nombres d’essais et d’indices.
 
 ## Vérifications
 

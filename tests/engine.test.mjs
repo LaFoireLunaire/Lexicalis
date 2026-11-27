@@ -53,9 +53,14 @@ test('unknown, empty and duplicate guesses never increase attempts', () => {
   const game = started();
   assert.throws(() => game.guess(''), /Écrivez/);
   assert.throws(() => game.guess('etoile'), /dictionnaire/);
-  assert.equal(game.guess('  LUNE  ').state.attempts, 1);
-  assert.throws(() => game.guess('lune'), /déjà/);
-  assert.equal(game.result().state.attempts, 1);
+  const original = game.guess('  LUNE  ').state.entries[0];
+  const before = game.guess('astre');
+  const repeated = game.guess('lune');
+  assert.equal(repeated.state.attempts, 2);
+  assert.equal(repeated.state.lastSequence, 0);
+  assert.deepEqual(repeated.state.entries, before.state.entries);
+  assert.deepEqual(repeated.snapshot.entries, before.snapshot.entries);
+  assert.deepEqual(repeated.state.entries[repeated.state.lastSequence], original);
 });
 test('winning and losing reveal true top 1000 and prohibit further guesses', () => {
   const game = started();
@@ -83,8 +88,24 @@ test('hints advance, remain distinct, exclude answer, and are counted separately
     best = entry.progression;
     assert.equal(result.state.attempts, 0);
     assert.equal(result.state.hints, i + 1);
-    assert.throws(() => game.guess(entry.word), /déjà/);
+    const repeated = game.guess(entry.word);
+    assert.equal(repeated.state.hints, i + 1);
+    assert.equal(repeated.state.attempts, 0);
+    assert.deepEqual(repeated.state.entries, result.state.entries);
   }
+});
+test('re-entering an earlier hint preserves its kind, order and counters', () => {
+  const game = started();
+  const hint = game.hint().state.entries[0];
+  const before = game.guess('lune');
+  const repeated = game.guess(hint.word);
+  assert.equal(repeated.state.attempts, 1);
+  assert.equal(repeated.state.hints, 1);
+  assert.equal(repeated.state.lastSequence, 0);
+  assert.deepEqual(repeated.state.entries, before.state.entries);
+  assert.deepEqual(repeated.state.entries[repeated.state.lastSequence], hint);
+  assert.equal(hint.kind, 'hint');
+  assert.equal(hint.attempt, null);
 });
 test('exhausted hints do not reveal the target or mutate the game', () => {
   const game = started(dataset(3));
@@ -102,6 +123,22 @@ test('save and restore recalculate scores and preserve all entries, hints and ou
   assert.ok(restored.restored);
   assert.deepEqual(restored.state, original.state);
   assert.deepEqual(restored.snapshot, original.snapshot);
+});
+test('recalled entries survive reload and old or invalid selections fall back without losing the game', () => {
+  const game = started();
+  game.guess('lune'); game.guess('astre');
+  const recalled = game.guess('  LUNE  ');
+  const copy = new Game(dataset());
+  const restored = copy.start(JSON.parse(JSON.stringify(recalled.snapshot)));
+  assert.ok(restored.restored);
+  assert.deepEqual(restored.state, recalled.state);
+  for (const lastSequence of [undefined, null, -1, 1005, 0.5, '0']) {
+    const fallback = copy.start({ ...recalled.snapshot, lastSequence });
+    assert.ok(fallback.restored);
+    assert.equal(fallback.state.attempts, 2);
+    assert.equal(fallback.state.lastSequence, 1);
+    assert.deepEqual(fallback.state.entries, recalled.state.entries);
+  }
 });
 test('incompatible and malformed saves reset safely', () => {
   const game = started();
@@ -133,4 +170,5 @@ test('new game clears state and hints', () => {
   assert.equal(fresh.state.hints, 0);
   assert.equal(fresh.state.outcome, 'playing');
   assert.equal(fresh.state.answer, null);
+  assert.equal(fresh.state.lastSequence, null);
 });
