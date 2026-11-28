@@ -649,7 +649,7 @@ dialog::backdrop {
 }
 .game-logo {
   display:block;
-  width:150px;
+  width:240px;
   max-width:100%;
   height:auto;
   aspect-ratio:2170 / 725;
